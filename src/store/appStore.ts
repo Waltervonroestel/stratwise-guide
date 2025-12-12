@@ -4,6 +4,7 @@ export type CompanyType = 'startup' | 'smb' | 'enterprise' | null;
 export type PlanType = 'entry' | 'enterprise' | 'premium' | null;
 export type Phase = 1 | 2 | 3;
 export type NotificationFilter = 'todos' | 'insights' | 'reportes' | 'drafts';
+export type ActiveView = 'chat' | 'insight' | 'report' | 'draft';
 
 export interface Notification {
   id: string;
@@ -15,22 +16,18 @@ export interface Notification {
 }
 
 export interface QuestionnaireData {
-  // Step 1: General Info
   name: string;
   website: string;
   socialMedia: string;
   industry: string;
   reach: string;
-  // Step 2: Business Model
   businessType: string;
   monthlyCustomers: string;
   salesApproach: string;
-  // Step 3: Financials & Goals
   grossRevenue: string;
   netProfitMargin: string;
   marketingBudget: string;
   businessGoals: string;
-  // Step 4: Target Audience
   idealCustomer: string;
   problemsSolved: string;
 }
@@ -44,6 +41,8 @@ interface AppState {
   questionnaireStep: number;
   questionnaireData: QuestionnaireData;
   questionnaireCompleted: boolean;
+  activeView: ActiveView;
+  selectedNotification: Notification | null;
   
   setPhase: (phase: Phase) => void;
   setCompanyType: (type: CompanyType) => void;
@@ -53,6 +52,8 @@ interface AppState {
   updateQuestionnaireData: (data: Partial<QuestionnaireData>) => void;
   completeQuestionnaire: () => void;
   goBack: () => void;
+  setActiveView: (view: ActiveView) => void;
+  openNotification: (notification: Notification) => void;
 }
 
 const initialQuestionnaireData: QuestionnaireData = {
@@ -77,7 +78,7 @@ const mockNotifications: Notification[] = [
     id: '1',
     type: 'insight',
     title: 'Oportunidad de mercado detectada',
-    description: 'Nuevo segmento B2B identificado en sector tecnológico',
+    description: 'Nuevo segmento B2B identificado en sector tecnológico. Se ha detectado un crecimiento del 45% en demanda de servicios de consultoría estratégica para empresas de tecnología en la región.',
     status: 'new',
     timestamp: new Date(),
   },
@@ -85,7 +86,7 @@ const mockNotifications: Notification[] = [
     id: '2',
     type: 'report',
     title: 'Reporte de Competencia Q3',
-    description: 'Análisis completo de 15 competidores directos',
+    description: 'Análisis completo de 15 competidores directos con métricas de posicionamiento, estrategias de precios y canales de distribución.',
     status: 'read',
     timestamp: new Date(Date.now() - 86400000),
   },
@@ -93,7 +94,7 @@ const mockNotifications: Notification[] = [
     id: '3',
     type: 'draft',
     title: 'Campaña Email Marketing',
-    description: 'Borrador requiere revisión antes de envío',
+    description: 'Borrador de secuencia de 5 emails para nurturing de leads B2B. Requiere revisión de copy y CTAs antes de activación.',
     status: 'critical',
     timestamp: new Date(Date.now() - 3600000),
   },
@@ -101,7 +102,7 @@ const mockNotifications: Notification[] = [
     id: '4',
     type: 'processing',
     title: 'Analizando respuestas...',
-    description: 'Generando estrategia personalizada',
+    description: 'Generando estrategia personalizada basada en las respuestas del cuestionario BrandOS.',
     status: 'processing',
     timestamp: new Date(),
   },
@@ -116,6 +117,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   questionnaireStep: 1,
   questionnaireData: initialQuestionnaireData,
   questionnaireCompleted: false,
+  activeView: 'chat',
+  selectedNotification: null,
 
   setPhase: (phase) => set({ phase }),
   setCompanyType: (companyType) => set({ companyType, phase: 2 }),
@@ -128,11 +131,26 @@ export const useAppStore = create<AppState>((set, get) => ({
     })),
   completeQuestionnaire: () => set({ questionnaireCompleted: true }),
   goBack: () => {
-    const { phase } = get();
-    if (phase === 2) {
+    const { phase, activeView } = get();
+    if (activeView !== 'chat') {
+      set({ activeView: 'chat', selectedNotification: null });
+    } else if (phase === 2) {
       set({ phase: 1, companyType: null });
     } else if (phase === 3) {
       set({ phase: 2, planType: null });
     }
+  },
+  setActiveView: (activeView) => set({ activeView }),
+  openNotification: (notification) => {
+    if (notification.type === 'processing') return;
+    const viewMap: Record<string, ActiveView> = {
+      insight: 'insight',
+      report: 'report',
+      draft: 'draft',
+    };
+    set({
+      activeView: viewMap[notification.type] || 'chat',
+      selectedNotification: notification,
+    });
   },
 }));
