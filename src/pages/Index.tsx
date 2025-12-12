@@ -1,12 +1,58 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { AnimatePresence, motion } from 'framer-motion';
+import { useAppStore } from '@/store/appStore';
+import { CompanySelection } from '@/components/phases/CompanySelection';
+import { PlanSelection } from '@/components/phases/PlanSelection';
+import { Dashboard } from '@/components/phases/Dashboard';
+
+const pageVariants = {
+  initial: { opacity: 0, x: 50 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -50 },
+};
 
 const Index = () => {
+  const phase = useAppStore((state) => state.phase);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <AnimatePresence mode="wait">
+        {phase === 1 && (
+          <motion.div
+            key="phase1"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            <CompanySelection />
+          </motion.div>
+        )}
+        {phase === 2 && (
+          <motion.div
+            key="phase2"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            <PlanSelection />
+          </motion.div>
+        )}
+        {phase === 3 && (
+          <motion.div
+            key="phase3"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            <Dashboard />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
