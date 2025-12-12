@@ -34,13 +34,13 @@ const getIcon = (type: string) => {
 const getStatusStyles = (status: string) => {
   switch (status) {
     case 'new':
-      return 'bg-destructive/10 border-destructive/20';
+      return 'bg-primary/5 border-l-4 border-l-primary';
     case 'critical':
-      return 'bg-warning-light border-warning/30';
+      return 'bg-warning-light border-l-4 border-l-warning';
     case 'processing':
-      return 'bg-info-light border-info/30';
+      return 'bg-info-light border-l-4 border-l-info';
     default:
-      return 'bg-secondary border-border';
+      return 'bg-card border-l-4 border-l-transparent';
   }
 };
 
@@ -49,7 +49,7 @@ interface NotificationsDropdownProps {
 }
 
 export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
-  const { notifications, notificationFilter, setNotificationFilter } = useAppStore();
+  const { notifications, notificationFilter, setNotificationFilter, openNotification } = useAppStore();
 
   const filteredNotifications = notifications.filter((n) => {
     if (notificationFilter === 'todos') return true;
@@ -59,16 +59,23 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
     return true;
   });
 
+  const handleNotificationClick = (notification: typeof notifications[0]) => {
+    if (notification.type !== 'processing') {
+      openNotification(notification);
+      onClose();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -10, scale: 0.95 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: -10, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="absolute left-full ml-2 bottom-0 w-80 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden"
+      className="absolute left-full ml-3 bottom-0 w-80 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden"
     >
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="p-4 border-b border-border flex items-center justify-between bg-card">
         <h3 className="font-heading font-semibold text-foreground">Notificaciones</h3>
         <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
           <X className="w-4 h-4" />
@@ -76,15 +83,15 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       </div>
 
       {/* Filters */}
-      <div className="p-3 border-b border-border flex gap-2 flex-wrap">
+      <div className="p-3 border-b border-border flex gap-2 flex-wrap bg-secondary/30">
         {filters.map((filter) => (
           <button
             key={filter.value}
             onClick={() => setNotificationFilter(filter.value)}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               notificationFilter === filter.value
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                : 'bg-card text-muted-foreground hover:bg-secondary border border-border'
             }`}
           >
             {filter.label}
@@ -93,7 +100,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       </div>
 
       {/* Notifications List */}
-      <div className="max-h-80 overflow-y-auto">
+      <div className="max-h-80 overflow-y-auto bg-card">
         {filteredNotifications.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground text-sm">
             No hay notificaciones
@@ -109,13 +116,15 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`w-full p-4 text-left border-b border-border last:border-0 hover:bg-secondary/50 transition-colors ${getStatusStyles(
+                onClick={() => handleNotificationClick(notification)}
+                disabled={isProcessing}
+                className={`w-full p-4 text-left border-b border-border last:border-0 transition-colors ${getStatusStyles(
                   notification.status
-                )}`}
+                )} ${isProcessing ? 'opacity-70 cursor-wait' : 'hover:bg-secondary/50 cursor-pointer'}`}
               >
                 <div className="flex items-start gap-3">
                   <div
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
                       notification.type === 'insight'
                         ? 'bg-amber-100 text-amber-600'
                         : notification.type === 'report'
@@ -126,7 +135,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                     }`}
                   >
                     <Icon
-                      className={`w-4 h-4 ${isProcessing ? 'animate-spin-slow' : ''}`}
+                      className={`w-5 h-5 ${isProcessing ? 'animate-spin' : ''}`}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -135,17 +144,17 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                         {notification.title}
                       </h4>
                       {notification.status === 'new' && (
-                        <span className="w-2 h-2 rounded-full bg-destructive flex-shrink-0" />
-                      )}
-                      {notification.status === 'critical' && (
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-warning text-white">
-                          Revisión
-                        </span>
+                        <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                       {notification.description}
                     </p>
+                    {notification.status === 'critical' && (
+                      <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded bg-warning text-white font-medium">
+                        Requiere revisión
+                      </span>
+                    )}
                   </div>
                 </div>
               </motion.button>

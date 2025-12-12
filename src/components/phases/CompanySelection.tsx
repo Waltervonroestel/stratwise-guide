@@ -8,14 +8,14 @@ const companyCards = [
     title: 'Startup',
     subtitle: 'Pre-seed, primeros clientes o crecimiento temprano',
     icon: Rocket,
-    gradient: 'from-violet-500 to-purple-600',
+    gradient: 'from-primary to-red-600',
   },
   {
     type: 'smb' as CompanyType,
     title: 'SMB',
     subtitle: 'Negocios en operación de 0 a 5+ años',
     icon: TrendingUp,
-    gradient: 'from-indigo-500 to-blue-600',
+    gradient: 'from-primary/80 to-primary',
   },
   {
     type: 'enterprise' as CompanyType,
