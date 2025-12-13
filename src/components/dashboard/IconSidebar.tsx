@@ -47,6 +47,25 @@ export function IconSidebar() {
         <ChevronLeft className="w-5 h-5" />
       </Button>
 
+      {/* Notifications - Larger bell - Moved to top */}
+      <div className="relative mb-4">
+        <motion.button
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setShowNotifications(!showNotifications)}
+          className="w-14 h-14 rounded-xl flex items-center justify-center bg-primary/10 text-primary hover:bg-primary/20 transition-colors relative"
+        >
+          <Bell className="w-7 h-7" />
+          <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-primary rounded-full animate-pulse border-2 border-sidebar" />
+        </motion.button>
+
+        <AnimatePresence>
+          {showNotifications && (
+            <NotificationsDropdown onClose={() => setShowNotifications(false)} />
+          )}
+        </AnimatePresence>
+      </div>
+
       {/* Navigation Items */}
       <nav className="flex-1 flex flex-col items-center gap-2">
         {sidebarItems.map((item) => (
@@ -68,25 +87,6 @@ export function IconSidebar() {
 
       {/* Bottom Items */}
       <div className="flex flex-col items-center gap-3 mt-auto">
-        {/* Notifications - Larger bell */}
-        <div className="relative">
-          <motion.button
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary/10 text-primary hover:bg-primary/20 transition-colors relative"
-          >
-            <Bell className="w-6 h-6" />
-            <span className="absolute top-1.5 right-1.5 w-3 h-3 bg-primary rounded-full animate-pulse border-2 border-sidebar" />
-          </motion.button>
-
-          <AnimatePresence>
-            {showNotifications && (
-              <NotificationsDropdown onClose={() => setShowNotifications(false)} />
-            )}
-          </AnimatePresence>
-        </div>
-
         {/* Settings */}
         <motion.button
           whileHover={{ scale: 1.05 }}

@@ -61,18 +61,28 @@ export function BrandOSQuestionnaire() {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
       setUploadedFiles(prev => [...prev, ...files]);
-      toast.success(`${files.length} documento(s) subido(s). Analizando...`);
+      toast.success(`${files.length} documento(s) subido(s). Analizando con IA...`);
       
-      // Simulate auto-fill after upload
+      // Simulate auto-fill after upload with comprehensive mock data
       setTimeout(() => {
         updateQuestionnaireData({
-          name: 'Mi Empresa Demo',
-          website: 'https://miempresa.com',
+          name: 'TechVentures Latam S.A.',
+          website: 'https://techventures.lat',
+          socialMedia: '@techventureslatam',
           industry: 'tech',
-          reach: 'national',
+          reach: 'regional',
+          businessType: 'services',
+          monthlyCustomers: '250',
+          salesApproach: 'subscription',
+          grossRevenue: '$180,000',
+          netProfitMargin: '35%',
+          marketingBudget: '$15,000',
+          businessGoals: 'Expandir operaciones a 3 países adicionales en LATAM, aumentar MRR en 40% y consolidar posición como líder en soluciones SaaS para PyMEs.',
+          idealCustomer: 'PyMEs con 20-100 empleados en sectores de retail, servicios profesionales y manufactura que buscan digitalizar sus operaciones.',
+          problemsSolved: 'Falta de herramientas digitales accesibles, procesos manuales ineficientes, dificultad para escalar operaciones sin aumentar costos.',
         });
-        toast.success('Formulario auto-completado con los datos del documento');
-      }, 2000);
+        toast.success('¡Formulario auto-completado exitosamente con IA!');
+      }, 2500);
     }
   };
 
