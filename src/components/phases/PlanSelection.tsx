@@ -2,9 +2,9 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Sparkles, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore, PlanType } from '@/store/appStore';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
-const plans = [
+const allPlans = [
   {
     type: 'entry' as PlanType,
     name: 'Entry Level',
@@ -13,8 +13,8 @@ const plans = [
     period: '/mes',
     tag: null,
     features: [
-      'Cuestionario Básico',
-      'Sugerencias automatizadas',
+      '5 búsquedas por insight',
+      'Calidad estándar',
       'Dashboard básico',
       'Soporte por email',
     ],
@@ -27,8 +27,8 @@ const plans = [
     period: '/mes',
     tag: 'Recomendado',
     features: [
-      'Cuestionario completo',
-      'Estrategias + Tácticas',
+      '20 búsquedas por insight',
+      'Calidad por encima del mercado',
       '1 Reporte mensual',
       'Análisis de competencia',
       'Soporte prioritario',
@@ -42,9 +42,9 @@ const plans = [
     period: '/mes',
     tag: 'Premium',
     features: [
-      'Content Generator',
+      '200 búsquedas por insight',
+      'Frameworks Big Four (McKinsey)',
       'Múltiples reportes',
-      'Acceso total',
       'Consultor AI dedicado',
       'Integraciones avanzadas',
       'API Access',
@@ -67,13 +67,37 @@ const cardVariants = {
 };
 
 export function PlanSelection() {
-  const { goBack, setPlanType, companyType } = useAppStore();
-  const [selectedPlan, setSelectedPlan] = useState<PlanType>('enterprise');
+  const { goBack, setPlanType, companyType, companyStage } = useAppStore();
+  
+  // Filter plans based on company type - Enterprise doesn't get Entry Level
+  const availablePlans = useMemo(() => {
+    if (companyType === 'enterprise') {
+      return allPlans.filter(plan => plan.type !== 'entry');
+    }
+    return allPlans;
+  }, [companyType]);
+
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>(
+    companyType === 'enterprise' ? 'enterprise' : 'enterprise'
+  );
 
   const handleContinue = () => {
     if (selectedPlan) {
       setPlanType(selectedPlan);
     }
+  };
+
+  const getStageLabel = () => {
+    const stageLabels: Record<string, string> = {
+      'preseed': 'Pre-seed',
+      'traccion': 'Tracción Inicial',
+      'crecimiento': 'Crecimiento Constante',
+      'pyme-construccion': 'PYME en Construcción',
+      'smb-2-5': 'SMB 2-5 años',
+      'smb-5plus': 'SMB +5 años',
+      'enterprise-stage': 'Enterprise',
+    };
+    return companyStage ? stageLabels[companyStage] || '' : '';
   };
 
   return (
@@ -103,7 +127,7 @@ export function PlanSelection() {
             Elige tu plan
           </h1>
           <p className="text-muted-foreground text-sm">
-            Perfil: {companyType === 'startup' ? 'Startup' : companyType === 'smb' ? 'SMB' : 'Enterprise'}
+            Perfil: {companyType === 'startup' ? 'Startup' : companyType === 'smb' ? 'SMB' : 'Enterprise'} • {getStageLabel()}
           </p>
         </div>
       </motion.div>
@@ -113,8 +137,10 @@ export function PlanSelection() {
         variants={containerVariants}
         className="flex-1 flex items-center justify-center"
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
-          {plans.map((plan) => {
+        <div className={`grid gap-6 max-w-5xl w-full ${
+          availablePlans.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-3xl' : 'grid-cols-1 md:grid-cols-3'
+        }`}>
+          {availablePlans.map((plan) => {
             const isSelected = selectedPlan === plan.type;
             const isRecommended = plan.tag === 'Recomendado';
             const isPremium = plan.tag === 'Premium';

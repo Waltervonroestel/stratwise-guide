@@ -1,8 +1,13 @@
 import { create } from 'zustand';
 
 export type CompanyType = 'startup' | 'smb' | 'enterprise' | null;
+export type CompanyStage = 
+  | 'preseed' | 'traccion' | 'crecimiento' // Startup stages
+  | 'pyme-construccion' | 'smb-2-5' | 'smb-5plus' // SMB stages
+  | 'enterprise-stage' // Enterprise stage
+  | null;
 export type PlanType = 'entry' | 'enterprise' | 'premium' | null;
-export type Phase = 1 | 2 | 3;
+export type Phase = 1 | 2 | 3 | 4; // Added phase 2 for stage selection
 export type NotificationFilter = 'todos' | 'insights' | 'reportes' | 'drafts';
 export type ActiveView = 'chat' | 'insight' | 'report' | 'draft';
 
@@ -35,6 +40,7 @@ export interface QuestionnaireData {
 interface AppState {
   phase: Phase;
   companyType: CompanyType;
+  companyStage: CompanyStage;
   planType: PlanType;
   notificationFilter: NotificationFilter;
   notifications: Notification[];
@@ -43,9 +49,11 @@ interface AppState {
   questionnaireCompleted: boolean;
   activeView: ActiveView;
   selectedNotification: Notification | null;
+  hasDocumentAddon: boolean;
   
   setPhase: (phase: Phase) => void;
   setCompanyType: (type: CompanyType) => void;
+  setCompanyStage: (stage: CompanyStage) => void;
   setPlanType: (plan: PlanType) => void;
   setNotificationFilter: (filter: NotificationFilter) => void;
   setQuestionnaireStep: (step: number) => void;
@@ -54,6 +62,7 @@ interface AppState {
   goBack: () => void;
   setActiveView: (view: ActiveView) => void;
   openNotification: (notification: Notification) => void;
+  purchaseDocumentAddon: () => void;
 }
 
 const initialQuestionnaireData: QuestionnaireData = {
@@ -111,6 +120,7 @@ const mockNotifications: Notification[] = [
 export const useAppStore = create<AppState>((set, get) => ({
   phase: 1,
   companyType: null,
+  companyStage: null,
   planType: null,
   notificationFilter: 'todos',
   notifications: mockNotifications,
@@ -119,10 +129,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   questionnaireCompleted: false,
   activeView: 'chat',
   selectedNotification: null,
+  hasDocumentAddon: false,
 
   setPhase: (phase) => set({ phase }),
   setCompanyType: (companyType) => set({ companyType, phase: 2 }),
-  setPlanType: (planType) => set({ planType, phase: 3 }),
+  setCompanyStage: (companyStage) => set({ companyStage, phase: 3 }),
+  setPlanType: (planType) => set({ planType, phase: 4 }),
   setNotificationFilter: (notificationFilter) => set({ notificationFilter }),
   setQuestionnaireStep: (questionnaireStep) => set({ questionnaireStep }),
   updateQuestionnaireData: (data) =>
@@ -137,7 +149,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     } else if (phase === 2) {
       set({ phase: 1, companyType: null });
     } else if (phase === 3) {
-      set({ phase: 2, planType: null });
+      set({ phase: 2, companyStage: null });
+    } else if (phase === 4) {
+      set({ phase: 3, planType: null });
     }
   },
   setActiveView: (activeView) => set({ activeView }),
@@ -153,4 +167,5 @@ export const useAppStore = create<AppState>((set, get) => ({
       selectedNotification: notification,
     });
   },
+  purchaseDocumentAddon: () => set({ hasDocumentAddon: true }),
 }));
