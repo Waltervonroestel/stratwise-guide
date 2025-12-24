@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useAppStore } from '@/store/appStore';
+import { useAppStore, getAvailableFlows } from '@/store/appStore';
 import { CompanySelection } from '@/components/phases/CompanySelection';
 import { StageSelection } from '@/components/phases/StageSelection';
+import { FlowSelection } from '@/components/phases/FlowSelection';
 import { PlanSelection } from '@/components/phases/PlanSelection';
 import { Dashboard } from '@/components/phases/Dashboard';
 
@@ -12,7 +13,14 @@ const pageVariants = {
 };
 
 const Index = () => {
-  const phase = useAppStore((state) => state.phase);
+  const { phase, companyType, companyStage } = useAppStore();
+
+  // Determine if flow selection should be shown
+  const shouldShowFlowSelection = () => {
+    if (phase !== 3) return false;
+    const availableFlows = getAvailableFlows(companyType, companyStage);
+    return availableFlows.length > 1;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,9 +49,21 @@ const Index = () => {
             <StageSelection />
           </motion.div>
         )}
-        {phase === 3 && (
+        {phase === 3 && shouldShowFlowSelection() && (
           <motion.div
             key="phase3"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.3 }}
+          >
+            <FlowSelection />
+          </motion.div>
+        )}
+        {phase === 4 && (
+          <motion.div
+            key="phase4"
             variants={pageVariants}
             initial="initial"
             animate="animate"
@@ -53,9 +73,9 @@ const Index = () => {
             <PlanSelection />
           </motion.div>
         )}
-        {phase === 4 && (
+        {phase === 5 && (
           <motion.div
-            key="phase4"
+            key="phase5"
             variants={pageVariants}
             initial="initial"
             animate="animate"

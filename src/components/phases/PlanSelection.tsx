@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Sparkles, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAppStore, PlanType } from '@/store/appStore';
+import { useAppStore, PlanType, FlowType } from '@/store/appStore';
 import { useState, useMemo } from 'react';
 
 const allPlans = [
   {
     type: 'entry' as PlanType,
-    name: 'Entry Level',
+    name: 'Entry Plan',
     price: '$',
     priceAmount: '49',
     period: '/mes',
@@ -67,7 +67,7 @@ const cardVariants = {
 };
 
 export function PlanSelection() {
-  const { goBack, setPlanType, companyType, companyStage } = useAppStore();
+  const { goBack, setPlanType, companyType, companyStage, flowType } = useAppStore();
   
   // Filter plans based on company type - Enterprise doesn't get Entry Level
   const availablePlans = useMemo(() => {
@@ -81,6 +81,9 @@ export function PlanSelection() {
     companyType === 'enterprise' ? 'enterprise' : 'enterprise'
   );
 
+  const totalSteps = companyType === 'enterprise' ? 3 : 4;
+  const currentStep = totalSteps;
+
   const handleContinue = () => {
     if (selectedPlan) {
       setPlanType(selectedPlan);
@@ -88,16 +91,32 @@ export function PlanSelection() {
   };
 
   const getStageLabel = () => {
-    const stageLabels: Record<string, string> = {
-      'preseed': 'Pre-seed',
-      'traccion': 'Tracción Inicial',
-      'crecimiento': 'Crecimiento Constante',
-      'pyme-construccion': 'PYME en Construcción',
-      'smb-2-5': 'SMB 2-5 años',
-      'smb-5plus': 'SMB +5 años',
+    const labels: Record<string, string> = {
+      'preseed-construccion': 'Pre-seed/Construcción',
+      'pequena-traccion': 'Pequeña tracción',
+      'semilla': 'Semilla',
+      'smb-preseed': 'Pre-seed/Construcción',
+      'smb-traccion': 'Pequeña tracción',
+      'smb-2-5': '2-5 años',
+      'smb-5plus': '+5 años',
       'enterprise-stage': 'Enterprise',
     };
-    return companyStage ? stageLabels[companyStage] || '' : '';
+    return companyStage ? labels[companyStage] || '' : '';
+  };
+
+  const getFlowLabel = (flow: FlowType) => {
+    const labels: Record<string, string> = {
+      'completo': 'Completo',
+      'estrategico': 'Estratégico',
+      'tactico': 'Táctico',
+    };
+    return flow ? labels[flow] || '' : '';
+  };
+
+  const getCompanyLabel = () => {
+    if (companyType === 'startup') return 'Startup';
+    if (companyType === 'smb') return 'SMB';
+    return 'Enterprise';
   };
 
   return (
@@ -108,6 +127,29 @@ export function PlanSelection() {
       exit="exit"
       className="min-h-screen flex flex-col px-4 py-8"
     >
+      {/* Progress Indicator */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center mb-6"
+      >
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="text-primary font-medium">Paso {currentStep}</span>
+          <span>de</span>
+          <span>{totalSteps}</span>
+        </div>
+        <div className="flex gap-1 mt-2">
+          {Array.from({ length: totalSteps }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-1 w-8 rounded-full transition-colors ${
+                i < currentStep ? 'bg-primary' : 'bg-muted'
+              }`}
+            />
+          ))}
+        </div>
+      </motion.div>
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -127,8 +169,30 @@ export function PlanSelection() {
             Elige tu plan
           </h1>
           <p className="text-muted-foreground text-sm">
-            Perfil: {companyType === 'startup' ? 'Startup' : companyType === 'smb' ? 'SMB' : 'Enterprise'} • {getStageLabel()}
+            {getCompanyLabel()} • {getStageLabel()} • Flujo {getFlowLabel(flowType)}
           </p>
+        </div>
+      </motion.div>
+
+      {/* Summary Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-5xl mx-auto w-full mb-6"
+      >
+        <div className="bg-secondary/30 rounded-lg p-4 border border-border/50">
+          <h3 className="text-sm font-medium text-foreground mb-2">Resumen de tu selección</h3>
+          <div className="flex flex-wrap gap-2">
+            <span className="px-3 py-1 bg-background rounded-full text-xs text-muted-foreground">
+              {getCompanyLabel()}
+            </span>
+            <span className="px-3 py-1 bg-background rounded-full text-xs text-muted-foreground">
+              {getStageLabel()}
+            </span>
+            <span className="px-3 py-1 bg-primary/10 rounded-full text-xs text-primary font-medium">
+              Flujo {getFlowLabel(flowType)}
+            </span>
+          </div>
         </div>
       </motion.div>
 
