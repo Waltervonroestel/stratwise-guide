@@ -1,57 +1,31 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, Sprout, Zap, TrendingUp, Building, Timer, Award, Rocket } from 'lucide-react';
+import { ArrowLeft, FileText, Target, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAppStore, CompanyStage } from '@/store/appStore';
+import { useAppStore, FlowType, getAvailableFlows } from '@/store/appStore';
 
-const stageOptions = {
-  startup: [
-    {
-      stage: 'preseed-construccion' as CompanyStage,
-      title: 'Pre-seed/Construcción',
-      description: 'En fase de ideación o construcción inicial',
-      icon: Sprout,
-    },
-    {
-      stage: 'pequena-traccion' as CompanyStage,
-      title: 'Pequeña tracción',
-      description: 'Tiene algunos clientes o usuarios iniciales',
-      icon: Zap,
-    },
-    {
-      stage: 'semilla' as CompanyStage,
-      title: 'Semilla',
-      description: 'Ha obtenido financiamiento semilla con tracción demostrable',
-      icon: Rocket,
-    },
-  ],
-  smb: [
-    {
-      stage: 'smb-preseed' as CompanyStage,
-      title: 'Pre-seed/Construcción',
-      description: 'Empresa nueva o en reconstrucción',
-      icon: Building,
-    },
-    {
-      stage: 'smb-traccion' as CompanyStage,
-      title: 'Pequeña tracción',
-      description: 'Con algunos clientes pero crecimiento limitado',
-      icon: Zap,
-    },
-    {
-      stage: 'smb-2-5' as CompanyStage,
-      title: '2-5 años',
-      description: 'Empresa establecida con 2-5 años de operación',
-      icon: Timer,
-    },
-    {
-      stage: 'smb-5plus' as CompanyStage,
-      title: '+5 años',
-      description: 'Empresa madura con más de 5 años de operación',
-      icon: Award,
-    },
-  ],
-  enterprise: [],
-};
+const flowOptions = [
+  {
+    type: 'completo' as FlowType,
+    title: 'Completo',
+    description: 'Plan completo desde cero (todas las preguntas)',
+    icon: FileText,
+    detail: 'Ideal si estás empezando o quieres una estrategia integral',
+  },
+  {
+    type: 'estrategico' as FlowType,
+    title: 'Estratégico',
+    description: 'Solo estrategias (ya tienes plan principal)',
+    icon: Target,
+    detail: 'Perfecto si ya tienes dirección pero necesitas refinar tu enfoque',
+  },
+  {
+    type: 'tactico' as FlowType,
+    title: 'Táctico',
+    description: 'Solo tácticas de implementación',
+    icon: Wrench,
+    detail: 'Para cuando necesitas acciones concretas de ejecución',
+  },
+];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -67,18 +41,37 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
-export function StageSelection() {
-  const { goBack, setCompanyStage, companyType } = useAppStore();
+export function FlowSelection() {
+  const { goBack, setFlowType, companyType, companyStage } = useAppStore();
 
-  if (!companyType || companyType === 'enterprise') return null;
+  const availableFlows = getAvailableFlows(companyType, companyStage);
+  const flows = flowOptions.filter(f => availableFlows.includes(f.type));
+  
+  const totalSteps = companyType === 'enterprise' ? 3 : 4;
+  const currentStep = companyType === 'enterprise' ? 2 : 3;
 
-  const stages = stageOptions[companyType];
-  const companyLabel = companyType === 'startup' ? 'Startup' : 'SMB';
-  const totalSteps = 4;
-  const currentStep = 2;
+  const getCompanyLabel = () => {
+    if (companyType === 'startup') return 'Startup';
+    if (companyType === 'smb') return 'SMB';
+    return 'Enterprise';
+  };
 
-  const handleStageSelect = (stage: CompanyStage) => {
-    setCompanyStage(stage);
+  const getStageLabel = () => {
+    const labels: Record<string, string> = {
+      'preseed-construccion': 'Pre-seed/Construcción',
+      'pequena-traccion': 'Pequeña tracción',
+      'semilla': 'Semilla',
+      'smb-preseed': 'Pre-seed/Construcción',
+      'smb-traccion': 'Pequeña tracción',
+      'smb-2-5': '2-5 años',
+      'smb-5plus': '+5 años',
+      'enterprise-stage': 'Enterprise',
+    };
+    return companyStage ? labels[companyStage] || '' : '';
+  };
+
+  const handleFlowSelect = (flow: FlowType) => {
+    setFlowType(flow);
   };
 
   return (
@@ -128,42 +121,45 @@ export function StageSelection() {
         </Button>
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-            ¿En qué etapa está tu {companyLabel}?
+            ¿Qué tipo de flujo necesitas?
           </h1>
           <p className="text-muted-foreground text-sm">
-            Selecciona la etapa que mejor describe tu situación actual
+            {getCompanyLabel()} • {getStageLabel()}
           </p>
         </div>
       </motion.div>
 
-      {/* Stage Cards */}
+      {/* Flow Cards */}
       <motion.div
         variants={containerVariants}
         className={`grid gap-6 w-full max-w-4xl ${
-          stages.length === 3 ? 'grid-cols-1 md:grid-cols-3' : 
-          stages.length === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' :
-          'grid-cols-1 md:grid-cols-2'
+          flows.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-2xl' :
+          flows.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
+          'grid-cols-1'
         }`}
       >
-        {stages.map((option) => {
+        {flows.map((option) => {
           const Icon = option.icon;
           return (
             <motion.div
-              key={option.stage}
+              key={option.type}
               variants={cardVariants}
               whileHover={{ y: -4, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleStageSelect(option.stage)}
-              className="card-interactive p-6 cursor-pointer text-center"
+              onClick={() => handleFlowSelect(option.type)}
+              className="card-interactive p-6 cursor-pointer"
             >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <Icon className="w-8 h-8 text-primary" />
+              <div className="w-14 h-14 mb-4 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Icon className="w-7 h-7 text-primary" />
               </div>
               <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
                 {option.title}
               </h3>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm mb-3">
                 {option.description}
+              </p>
+              <p className="text-xs text-muted-foreground/80 italic">
+                {option.detail}
               </p>
             </motion.div>
           );
