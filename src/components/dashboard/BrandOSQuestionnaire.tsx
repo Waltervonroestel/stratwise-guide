@@ -1,22 +1,51 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Check, Building, Users, DollarSign, Target, FileUp, File, X } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Building, Users, DollarSign, Target, FileUp, File, X, FileText, Wrench, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAppStore } from '@/store/appStore';
+import { useAppStore, FlowType } from '@/store/appStore';
 import { DocumentUploadPaywall } from './DocumentUploadPaywall';
 import { toast } from 'sonner';
 
-const steps = [
+// Define different question sets for each flow type
+const completeSteps = [
   { id: 1, title: 'Información General', icon: Building },
   { id: 2, title: 'Modelo de Negocio', icon: Users },
   { id: 3, title: 'Finanzas y Metas', icon: DollarSign },
   { id: 4, title: 'Audiencia Objetivo', icon: Target },
 ];
+
+const strategicSteps = [
+  { id: 1, title: 'Plan Principal', icon: FileText },
+  { id: 2, title: 'Objetivos Estratégicos', icon: Target },
+  { id: 3, title: 'Recursos y Capacidades', icon: DollarSign },
+];
+
+const tacticSteps = [
+  { id: 1, title: 'Contexto Actual', icon: Building },
+  { id: 2, title: 'Tácticas Prioritarias', icon: Wrench },
+];
+
+const flowLabels: Record<string, { label: string; description: string; icon: typeof FileText }> = {
+  completo: { label: 'Flujo Completo', description: 'Plan desde cero (Q0-Q58)', icon: FileText },
+  estrategico: { label: 'Flujo Estratégico', description: 'Estrategias basadas en tu plan', icon: Target },
+  tactico: { label: 'Flujo Táctico', description: 'Tácticas de implementación', icon: Wrench },
+};
+
+const getStepsForFlow = (flowType: FlowType) => {
+  switch (flowType) {
+    case 'estrategico':
+      return strategicSteps;
+    case 'tactico':
+      return tacticSteps;
+    default:
+      return completeSteps;
+  }
+};
 
 export function BrandOSQuestionnaire() {
   const {
@@ -27,6 +56,8 @@ export function BrandOSQuestionnaire() {
     completeQuestionnaire,
     questionnaireCompleted,
     hasDocumentAddon,
+    flowType,
+    planType,
   } = useAppStore();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -34,8 +65,14 @@ export function BrandOSQuestionnaire() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Get steps based on flow type
+  const steps = getStepsForFlow(flowType);
+  const totalSteps = steps.length;
+  const currentFlowInfo = flowType ? flowLabels[flowType] : flowLabels.completo;
+  const FlowIcon = currentFlowInfo.icon;
+
   const handleNext = () => {
-    if (questionnaireStep < 4) {
+    if (questionnaireStep < totalSteps) {
       setQuestionnaireStep(questionnaireStep + 1);
     } else {
       completeQuestionnaire();
@@ -127,12 +164,11 @@ export function BrandOSQuestionnaire() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-card border border-border rounded-xl shadow-lg max-w-2xl overflow-hidden"
       >
-        {/* Header */}
         <div className="bg-gradient-to-r from-primary to-purple-600 p-4 text-primary-foreground">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="font-heading font-semibold text-lg">Cuestionario BrandOS</h3>
-              <p className="text-sm opacity-90">Paso {questionnaireStep} de 4</p>
+              <p className="text-sm opacity-90">Paso {questionnaireStep} de {totalSteps}</p>
             </div>
             <Button
               variant="ghost"
@@ -143,6 +179,19 @@ export function BrandOSQuestionnaire() {
               <FileUp className="w-4 h-4" />
               Auto-completar
             </Button>
+          </div>
+          {/* Flow Type Badge */}
+          <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+            <FlowIcon className="w-4 h-4" />
+            <div className="flex-1">
+              <span className="font-medium text-sm">{currentFlowInfo.label}</span>
+              <span className="text-xs opacity-75 ml-2">• {currentFlowInfo.description}</span>
+            </div>
+            {planType && (
+              <span className="text-xs bg-white/20 px-2 py-0.5 rounded">
+                {planType === 'entry' ? 'Entry Plan' : planType === 'enterprise' ? 'Enterprise' : 'Top Consultancy'}
+              </span>
+            )}
           </div>
           <input
             ref={fileInputRef}
@@ -210,9 +259,10 @@ export function BrandOSQuestionnaire() {
         {/* Form Content */}
         <div className="p-6">
           <AnimatePresence mode="wait">
-            {questionnaireStep === 1 && (
+            {/* FLUJO COMPLETO - Step 1 (or default if no flow selected) */}
+            {(flowType === 'completo' || flowType === null) && questionnaireStep === 1 && (
               <motion.div
-                key="step1"
+                key="completo-step1"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -295,9 +345,10 @@ export function BrandOSQuestionnaire() {
               </motion.div>
             )}
 
-            {questionnaireStep === 2 && (
+            {/* FLUJO COMPLETO - Step 2 */}
+            {(flowType === 'completo' || flowType === null) && questionnaireStep === 2 && (
               <motion.div
-                key="step2"
+                key="completo-step2"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -367,9 +418,10 @@ export function BrandOSQuestionnaire() {
               </motion.div>
             )}
 
-            {questionnaireStep === 3 && (
+            {/* FLUJO COMPLETO - Step 3 */}
+            {(flowType === 'completo' || flowType === null) && questionnaireStep === 3 && (
               <motion.div
-                key="step3"
+                key="completo-step3"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -427,9 +479,10 @@ export function BrandOSQuestionnaire() {
               </motion.div>
             )}
 
-            {questionnaireStep === 4 && (
+            {/* FLUJO COMPLETO - Step 4 */}
+            {(flowType === 'completo' || flowType === null) && questionnaireStep === 4 && (
               <motion.div
-                key="step4"
+                key="completo-step4"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -466,6 +519,348 @@ export function BrandOSQuestionnaire() {
                 </div>
               </motion.div>
             )}
+
+            {/* FLUJO ESTRATÉGICO - Step 1: Plan Principal */}
+            {flowType === 'estrategico' && questionnaireStep === 1 && (
+              <motion.div
+                key="estrategico-step1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h4 className="font-heading font-semibold text-foreground mb-4">
+                  Plan Principal Existente
+                </h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Ya tienes un plan de negocio. Cuéntanos sobre él para crear estrategias alineadas.
+                </p>
+
+                <div className="space-y-2">
+                  <Label htmlFor="currentPlan">Describe tu plan de negocio actual</Label>
+                  <Textarea
+                    id="currentPlan"
+                    value={questionnaireData.businessGoals}
+                    onChange={(e) => updateQuestionnaireData({ businessGoals: e.target.value })}
+                    placeholder="Resumen de tu visión, misión y estrategia principal actual..."
+                    rows={4}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="currentPosition">¿Cuál es tu posición actual en el mercado?</Label>
+                  <Textarea
+                    id="currentPosition"
+                    value={questionnaireData.idealCustomer}
+                    onChange={(e) => updateQuestionnaireData({ idealCustomer: e.target.value })}
+                    placeholder="Describe tu participación de mercado, ventajas competitivas, diferenciadores..."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Industria</Label>
+                    <Select
+                      value={questionnaireData.industry}
+                      onValueChange={(value) => updateQuestionnaireData({ industry: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona industria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="tech">Tecnología</SelectItem>
+                        <SelectItem value="retail">Retail</SelectItem>
+                        <SelectItem value="services">Servicios</SelectItem>
+                        <SelectItem value="manufacturing">Manufactura</SelectItem>
+                        <SelectItem value="healthcare">Salud</SelectItem>
+                        <SelectItem value="finance">Finanzas</SelectItem>
+                        <SelectItem value="other">Otro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Alcance actual</Label>
+                    <Select
+                      value={questionnaireData.reach}
+                      onValueChange={(value) => updateQuestionnaireData({ reach: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona alcance" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="local">Local</SelectItem>
+                        <SelectItem value="regional">Regional</SelectItem>
+                        <SelectItem value="national">Nacional</SelectItem>
+                        <SelectItem value="global">Global</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* FLUJO ESTRATÉGICO - Step 2: Objetivos Estratégicos */}
+            {flowType === 'estrategico' && questionnaireStep === 2 && (
+              <motion.div
+                key="estrategico-step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h4 className="font-heading font-semibold text-foreground mb-4">
+                  Objetivos Estratégicos
+                </h4>
+
+                <div className="space-y-2">
+                  <Label htmlFor="strategicGoals">¿Qué objetivos estratégicos quieres alcanzar?</Label>
+                  <Textarea
+                    id="strategicGoals"
+                    value={questionnaireData.problemsSolved}
+                    onChange={(e) => updateQuestionnaireData({ problemsSolved: e.target.value })}
+                    placeholder="Describe 3-5 objetivos estratégicos clave para los próximos 12-18 meses..."
+                    rows={4}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Prioridad principal</Label>
+                  <RadioGroup
+                    value={questionnaireData.businessType}
+                    onValueChange={(value) => updateQuestionnaireData({ businessType: value })}
+                    className="flex flex-col gap-2"
+                  >
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="growth" id="growth" />
+                      <Label htmlFor="growth" className="cursor-pointer flex-1">
+                        Crecimiento de ingresos
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="market" id="market" />
+                      <Label htmlFor="market" className="cursor-pointer flex-1">
+                        Expansión de mercado
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="efficiency" id="efficiency" />
+                      <Label htmlFor="efficiency" className="cursor-pointer flex-1">
+                        Eficiencia operativa
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="brand" id="brand" />
+                      <Label htmlFor="brand" className="cursor-pointer flex-1">
+                        Posicionamiento de marca
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              </motion.div>
+            )}
+
+            {/* FLUJO ESTRATÉGICO - Step 3: Recursos y Capacidades */}
+            {flowType === 'estrategico' && questionnaireStep === 3 && (
+              <motion.div
+                key="estrategico-step3"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h4 className="font-heading font-semibold text-foreground mb-4">
+                  Recursos y Capacidades
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="budget">Presupuesto disponible para estrategia</Label>
+                    <Input
+                      id="budget"
+                      value={questionnaireData.marketingBudget}
+                      onChange={(e) => updateQuestionnaireData({ marketingBudget: e.target.value })}
+                      placeholder="Ej: $25,000"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="team">Tamaño del equipo</Label>
+                    <Input
+                      id="team"
+                      value={questionnaireData.monthlyCustomers}
+                      onChange={(e) => updateQuestionnaireData({ monthlyCustomers: e.target.value })}
+                      placeholder="Ej: 15"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Capacidades internas</Label>
+                  <Select
+                    value={questionnaireData.salesApproach}
+                    onValueChange={(value) => updateQuestionnaireData({ salesApproach: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="¿Qué tan preparados están?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high">Alta - Equipo experimentado y recursos completos</SelectItem>
+                      <SelectItem value="medium">Media - Algunas capacidades, necesitamos apoyo</SelectItem>
+                      <SelectItem value="low">Baja - Necesitamos desarrollar capacidades</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="constraints">Restricciones o desafíos conocidos</Label>
+                  <Textarea
+                    id="constraints"
+                    value={questionnaireData.grossRevenue}
+                    onChange={(e) => updateQuestionnaireData({ grossRevenue: e.target.value })}
+                    placeholder="¿Qué limitaciones o desafíos enfrentas para ejecutar la estrategia?"
+                    rows={3}
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {/* FLUJO TÁCTICO - Step 1: Contexto Actual */}
+            {flowType === 'tactico' && questionnaireStep === 1 && (
+              <motion.div
+                key="tactico-step1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h4 className="font-heading font-semibold text-foreground mb-4">
+                  Contexto Actual
+                </h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Ya tienes plan y estrategia. Vamos directo a las tácticas de implementación.
+                </p>
+
+                <div className="space-y-2">
+                  <Label htmlFor="currentStrategy">¿Cuál es tu estrategia actual?</Label>
+                  <Textarea
+                    id="currentStrategy"
+                    value={questionnaireData.businessGoals}
+                    onChange={(e) => updateQuestionnaireData({ businessGoals: e.target.value })}
+                    placeholder="Resumen breve de la estrategia que quieres implementar..."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Área de enfoque táctico</Label>
+                  <RadioGroup
+                    value={questionnaireData.businessType}
+                    onValueChange={(value) => updateQuestionnaireData({ businessType: value })}
+                    className="flex flex-col gap-2"
+                  >
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="marketing" id="marketing" />
+                      <Label htmlFor="marketing" className="cursor-pointer flex-1">
+                        Marketing y adquisición de clientes
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="sales" id="sales" />
+                      <Label htmlFor="sales" className="cursor-pointer flex-1">
+                        Ventas y conversión
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="product" id="product" />
+                      <Label htmlFor="product" className="cursor-pointer flex-1">
+                        Producto y operaciones
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
+                      <RadioGroupItem value="all" id="all" />
+                      <Label htmlFor="all" className="cursor-pointer flex-1">
+                        Tácticas integrales (todas las áreas)
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="timeline">Horizonte de implementación</Label>
+                  <Select
+                    value={questionnaireData.salesApproach}
+                    onValueChange={(value) => updateQuestionnaireData({ salesApproach: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="¿En cuánto tiempo?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="30days">30 días - Acciones inmediatas</SelectItem>
+                      <SelectItem value="90days">90 días - Plan trimestral</SelectItem>
+                      <SelectItem value="6months">6 meses - Plan semestral</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </motion.div>
+            )}
+
+            {/* FLUJO TÁCTICO - Step 2: Tácticas Prioritarias */}
+            {flowType === 'tactico' && questionnaireStep === 2 && (
+              <motion.div
+                key="tactico-step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h4 className="font-heading font-semibold text-foreground mb-4">
+                  Tácticas Prioritarias
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="budget">Presupuesto táctico disponible</Label>
+                    <Input
+                      id="budget"
+                      value={questionnaireData.marketingBudget}
+                      onChange={(e) => updateQuestionnaireData({ marketingBudget: e.target.value })}
+                      placeholder="Ej: $10,000"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="team">Personas disponibles para ejecutar</Label>
+                    <Input
+                      id="team"
+                      value={questionnaireData.monthlyCustomers}
+                      onChange={(e) => updateQuestionnaireData({ monthlyCustomers: e.target.value })}
+                      placeholder="Ej: 3"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="quickWins">¿Qué "quick wins" buscas?</Label>
+                  <Textarea
+                    id="quickWins"
+                    value={questionnaireData.problemsSolved}
+                    onChange={(e) => updateQuestionnaireData({ problemsSolved: e.target.value })}
+                    placeholder="Describe resultados rápidos que esperas lograr..."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="kpis">KPIs objetivo</Label>
+                  <Textarea
+                    id="kpis"
+                    value={questionnaireData.idealCustomer}
+                    onChange={(e) => updateQuestionnaireData({ idealCustomer: e.target.value })}
+                    placeholder="¿Qué métricas quieres mover? (ej: +20% leads, -15% CAC, +30% conversión)"
+                    rows={3}
+                  />
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
@@ -481,7 +876,7 @@ export function BrandOSQuestionnaire() {
             Atrás
           </Button>
           <Button onClick={handleNext} className="btn-primary-gradient gap-2">
-            {questionnaireStep === 4 ? (
+            {questionnaireStep === totalSteps ? (
               <>
                 Finalizar
                 <Check className="w-4 h-4" />
