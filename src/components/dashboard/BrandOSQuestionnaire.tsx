@@ -177,7 +177,7 @@ export function BrandOSQuestionnaire() {
               className="bg-white/20 hover:bg-white/30 text-white gap-2"
             >
               <FileUp className="w-4 h-4" />
-              Auto-completar
+              Subir archivos
             </Button>
           </div>
           {/* Flow Type Badge */}
