@@ -147,7 +147,7 @@ export function BrandOSQuestionnaire() {
             <Check className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h4 className="font-medium text-foreground text-sm">Cuestionario BrandOS Completado</h4>
+            <h4 className="font-medium text-foreground text-sm">Conversación BrandOS Completada</h4>
             <p className="text-xs text-muted-foreground">
               {questionnaireData.name || 'Tu empresa'} • {questionnaireData.industry || 'Industria'}
             </p>
@@ -167,7 +167,7 @@ export function BrandOSQuestionnaire() {
         <div className="bg-gradient-to-r from-primary to-purple-600 p-4 text-primary-foreground">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="font-heading font-semibold text-lg">Cuestionario BrandOS</h3>
+              <h3 className="font-heading font-semibold text-lg">Conversación BrandOS</h3>
               <p className="text-sm opacity-90">Paso {questionnaireStep} de {totalSteps}</p>
             </div>
             <Button

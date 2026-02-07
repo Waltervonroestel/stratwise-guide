@@ -14,7 +14,7 @@ const allPlans = [
     tag: null,
     cta: 'Start 7-day trial',
     features: [
-      'Complete questionnaire',
+      'Complete conversation',
       'Access insights on:',
       'Research, Data, Brand, Product, Media and Marketing',
     ],
