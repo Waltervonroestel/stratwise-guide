@@ -16,42 +16,42 @@ interface DocumentCategory {
 const initialCategories: DocumentCategory[] = [
   {
     id: 'brand',
-    title: 'Marca',
-    description: 'Documentos de identidad y estrategia de marca',
+    title: 'Brand',
+    description: 'Brand identity and strategy documents',
     icon: FileText,
-    examples: ['Misión y visión', 'Brief creativo', 'Mensajes clave', 'Guía de marca', 'Estrategias de marca'],
+    examples: ['Mission & vision', 'Creative brief', 'Key messaging', 'Brand guidelines', 'Brand strategies'],
     files: [],
   },
   {
     id: 'financial',
-    title: 'Financieros',
-    description: 'Información financiera y presupuestos',
+    title: 'Financial',
+    description: 'Financial information and budgets',
     icon: DollarSign,
-    examples: ['Presupuestos', 'Gastos y costos', 'Ingresos', 'Balance sheet', 'Estado de resultados'],
+    examples: ['Budgets', 'Expenses & costs', 'Revenue', 'Balance sheet', 'Income statement'],
     files: [],
   },
   {
     id: 'product',
-    title: 'Producto',
-    description: 'Documentación de producto y pricing',
+    title: 'Product',
+    description: 'Product documentation and pricing',
     icon: Package,
-    examples: ['Product roadmap', 'Pricing strategy', 'Feature list', 'Análisis competitivo de producto'],
+    examples: ['Product roadmap', 'Pricing strategy', 'Feature list', 'Competitive product analysis'],
     files: [],
   },
   {
     id: 'media',
     title: 'Media',
-    description: 'Canales y estrategias de medios',
+    description: 'Media channels and strategies',
     icon: Megaphone,
     examples: ['Media channels', 'Media strategies', 'Media mix', 'Performance reports', 'Social media analytics'],
     files: [],
   },
   {
     id: 'other',
-    title: 'Otros',
-    description: 'Cualquier otro documento relevante',
+    title: 'Other',
+    description: 'Any other relevant documents',
     icon: FolderOpen,
-    examples: ['Investigación de mercado', 'Análisis de audiencia', 'KPIs actuales', 'Planes anteriores'],
+    examples: ['Market research', 'Audience analysis', 'Current KPIs', 'Previous plans'],
     files: [],
   },
 ];
@@ -115,8 +115,8 @@ export function DocumentUpload() {
         className="flex flex-col items-center mb-6"
       >
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-primary font-medium">Paso {currentStep}</span>
-          <span>de</span>
+          <span className="text-primary font-medium">Step {currentStep}</span>
+          <span>of</span>
           <span>{totalSteps}</span>
         </div>
         <div className="flex gap-1 mt-2">
@@ -147,10 +147,10 @@ export function DocumentUpload() {
         </Button>
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-            Sube tus documentos
+            Upload your documents
           </h1>
           <p className="text-muted-foreground text-sm">
-            Sube archivos relevantes para generar el mejor plan de marketing posible
+            Upload relevant files to generate the best marketing plan possible
           </p>
         </div>
       </motion.div>
@@ -166,10 +166,10 @@ export function DocumentUpload() {
           <Upload className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-sm text-foreground font-medium mb-1">
-              Mientras más documentos subas, mejor será tu plan
+              The more documents you upload, the better your plan will be
             </p>
             <p className="text-xs text-muted-foreground">
-              Puedes subir PDFs, Word, Excel, PowerPoint o imágenes. Este paso es opcional — puedes continuar sin subir documentos y agregarlos después.
+              You can upload PDFs, Word, Excel, PowerPoint, or images. This step is optional — you can continue without uploading documents and add them later.
             </p>
           </div>
         </div>
@@ -240,7 +240,7 @@ export function DocumentUpload() {
                 <div className="border-2 border-dashed border-border rounded-lg p-3 text-center hover:border-primary/50 hover:bg-accent/30 transition-colors">
                   <Upload className="w-4 h-4 mx-auto text-muted-foreground mb-1" />
                   <span className="text-xs text-muted-foreground">
-                    Subir archivos
+                    Upload files
                   </span>
                 </div>
                 <input
@@ -265,18 +265,18 @@ export function DocumentUpload() {
       >
         {totalFiles > 0 && (
           <p className="text-sm text-muted-foreground">
-            {totalFiles} archivo{totalFiles !== 1 ? 's' : ''} seleccionado{totalFiles !== 1 ? 's' : ''}
+            {totalFiles} file{totalFiles !== 1 ? 's' : ''} selected
           </p>
         )}
         <div className="flex gap-4">
           <Button variant="outline" onClick={goBack} className="px-6">
-            Volver
+            Back
           </Button>
           <Button
             onClick={advanceToDashboard}
             className="btn-primary-gradient px-8 gap-2"
           >
-            {totalFiles > 0 ? 'Continuar' : 'Omitir por ahora'}
+            {totalFiles > 0 ? 'Continue' : 'Skip for now'}
             <ArrowRight className="w-4 h-4" />
           </Button>
         </div>

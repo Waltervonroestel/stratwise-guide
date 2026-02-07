@@ -72,7 +72,6 @@ const cardVariants = {
 export function PlanSelection() {
   const { goBack, setPlanType, companyType, companyStage, flowType } = useAppStore();
   
-  // All plans available for everyone now
   const availablePlans = allPlans;
 
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('enterprise');
@@ -88,12 +87,12 @@ export function PlanSelection() {
 
   const getStageLabel = () => {
     const labels: Record<string, string> = {
-      'preseed-construccion': 'Pre-seed/Construcción',
+      'preseed-construccion': 'Pre-seed/Building',
       'pequena-traccion': 'Seed',
       'semilla': 'Grow',
-      'smb-preseed': '0-1 años de operación',
-      'smb-traccion': '1-2 años de operación',
-      'smb-2-5': 'Más de 2 años de operación',
+      'smb-preseed': '0-1 years',
+      'smb-traccion': '1-2 years',
+      'smb-2-5': '2+ years',
       'enterprise-stage': 'Enterprise',
     };
     return companyStage ? labels[companyStage] || '' : '';
@@ -101,9 +100,9 @@ export function PlanSelection() {
 
   const getFlowLabel = (flow: FlowType) => {
     const labels: Record<string, string> = {
-      'completo': 'Completo',
-      'estrategico': 'Estratégico',
-      'tactico': 'Táctico',
+      'completo': 'Complete',
+      'estrategico': 'Strategic',
+      'tactico': 'Tactical',
     };
     return flow ? labels[flow] || '' : '';
   };
@@ -129,8 +128,8 @@ export function PlanSelection() {
         className="flex flex-col items-center mb-6"
       >
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-primary font-medium">Paso {currentStep}</span>
-          <span>de</span>
+          <span className="text-primary font-medium">Step {currentStep}</span>
+          <span>of</span>
           <span>{totalSteps}</span>
         </div>
         <div className="flex gap-1 mt-2">
@@ -161,10 +160,10 @@ export function PlanSelection() {
         </Button>
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-            Elige tu plan
+            Choose your plan
           </h1>
           <p className="text-muted-foreground text-sm">
-            {getCompanyLabel()} • {getStageLabel()} • Flujo {getFlowLabel(flowType)}
+            {getCompanyLabel()} • {getStageLabel()} • {getFlowLabel(flowType)} Flow
           </p>
         </div>
       </motion.div>
@@ -176,7 +175,7 @@ export function PlanSelection() {
         className="max-w-5xl mx-auto w-full mb-6"
       >
         <div className="bg-secondary/30 rounded-lg p-4 border border-border/50">
-          <h3 className="text-sm font-medium text-foreground mb-2">Resumen de tu selección</h3>
+          <h3 className="text-sm font-medium text-foreground mb-2">Your selection summary</h3>
           <div className="flex flex-wrap gap-2">
             <span className="px-3 py-1 bg-background rounded-full text-xs text-muted-foreground">
               {getCompanyLabel()}
@@ -185,7 +184,7 @@ export function PlanSelection() {
               {getStageLabel()}
             </span>
             <span className="px-3 py-1 bg-primary/10 rounded-full text-xs text-primary font-medium">
-              Flujo {getFlowLabel(flowType)}
+              {getFlowLabel(flowType)} Flow
             </span>
           </div>
         </div>
@@ -254,7 +253,7 @@ export function PlanSelection() {
                       : 'bg-secondary text-secondary-foreground'
                   }`}
                 >
-                  {isSelected ? 'Seleccionado' : plan.cta}
+                  {isSelected ? 'Selected' : plan.cta}
                 </div>
 
                 {/* Key Features Header */}
@@ -283,14 +282,14 @@ export function PlanSelection() {
         className="flex justify-center gap-4 mt-8"
       >
         <Button variant="outline" onClick={goBack} className="px-6">
-          Volver
+          Back
         </Button>
         <Button
           onClick={handleContinue}
           disabled={!selectedPlan}
           className="btn-primary-gradient px-8"
         >
-          Iniciar Conversación
+          Start Conversation
         </Button>
       </motion.div>
     </motion.div>

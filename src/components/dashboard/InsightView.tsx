@@ -25,8 +25,8 @@ export function InsightView() {
             <Lightbulb className="w-5 h-5 text-amber-600" />
           </div>
           <div>
-            <h1 className="font-heading font-semibold text-foreground">Insight Estratégico</h1>
-            <p className="text-xs text-muted-foreground">Generado automáticamente</p>
+            <h1 className="font-heading font-semibold text-foreground">Strategic Insight</h1>
+            <p className="text-xs text-muted-foreground">Auto-generated</p>
           </div>
         </div>
       </header>
@@ -34,7 +34,6 @@ export function InsightView() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-3xl mx-auto space-y-6">
-          {/* Main Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -49,7 +48,6 @@ export function InsightView() {
             </p>
           </motion.div>
 
-          {/* Key Findings */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -58,13 +56,13 @@ export function InsightView() {
           >
             <h3 className="font-heading font-semibold text-foreground mb-4 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-primary" />
-              Hallazgos Clave
+              Key Findings
             </h3>
             <ul className="space-y-3">
               {[
-                'Crecimiento del 45% en demanda de servicios de consultoría estratégica',
-                'Empresas de tecnología muestran mayor disposición a invertir en asesoría',
-                'Competidores directos aún no han penetrado este segmento',
+                '45% growth in demand for strategic consulting services',
+                'Technology companies show greater willingness to invest in advisory',
+                'Direct competitors have not yet penetrated this segment',
               ].map((finding, idx) => (
                 <li key={idx} className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
@@ -74,7 +72,6 @@ export function InsightView() {
             </ul>
           </motion.div>
 
-          {/* Recommendations */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,13 +80,13 @@ export function InsightView() {
           >
             <h3 className="font-heading font-semibold text-foreground mb-4 flex items-center gap-2">
               <Target className="w-5 h-5 text-primary" />
-              Recomendaciones
+              Recommendations
             </h3>
             <div className="space-y-4">
               {[
-                { title: 'Desarrollar propuesta de valor específica', desc: 'Crear messaging enfocado en los pain points del sector tecnológico' },
-                { title: 'Campaña de contenido educativo', desc: 'Publicar casos de éxito y guías prácticas para CTOs y founders' },
-                { title: 'Alianzas estratégicas', desc: 'Identificar incubadoras y aceleradoras como canales de distribución' },
+                { title: 'Develop a specific value proposition', desc: 'Create messaging focused on the tech sector pain points' },
+                { title: 'Educational content campaign', desc: 'Publish case studies and practical guides for CTOs and founders' },
+                { title: 'Strategic alliances', desc: 'Identify incubators and accelerators as distribution channels' },
               ].map((rec, idx) => (
                 <div key={idx} className="p-4 bg-secondary/50 rounded-lg border border-border">
                   <h4 className="font-medium text-foreground mb-1">{rec.title}</h4>
@@ -99,7 +96,6 @@ export function InsightView() {
             </div>
           </motion.div>
 
-          {/* Actions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -107,10 +103,10 @@ export function InsightView() {
             className="flex gap-3"
           >
             <Button className="btn-primary-gradient">
-              Generar Plan de Acción
+              Generate Action Plan
             </Button>
             <Button variant="outline">
-              Exportar PDF
+              Export PDF
             </Button>
           </motion.div>
         </div>

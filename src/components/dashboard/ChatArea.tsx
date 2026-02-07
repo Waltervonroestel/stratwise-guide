@@ -16,7 +16,7 @@ const initialMessages: Message[] = [
     id: '1',
     type: 'ai',
     content:
-      'Toda gran empresa tiene un propósito. ¿Cuál es la misión que impulsa a la tuya?',
+      'Every great company has a purpose. What is the mission that drives yours?',
   },
   {
     id: '2',
@@ -49,7 +49,7 @@ export function ChatArea() {
           id: (Date.now() + 1).toString(),
           type: 'ai',
           content:
-            'Interesante. ¿Y cuál es tu modelo de ingresos principal? ¿Contratos a largo plazo, compras puntuales, suscripciones? Descríbemelo un poco.',
+            'Interesting. And what is your main revenue model? Long-term contracts, one-time purchases, subscriptions? Tell me a bit about it.',
         },
       ]);
     }, 1000);
@@ -63,7 +63,7 @@ export function ChatArea() {
           <div className="px-3 py-1.5 bg-secondary rounded-lg border border-border">
             <span className="text-sm font-medium text-foreground">A</span>
           </div>
-          <span className="text-sm text-foreground font-medium">Glosario de terminos</span>
+          <span className="text-sm text-foreground font-medium">Glossary of terms</span>
         </div>
         <div className="flex items-center gap-4">
           <div className="h-2 w-48 bg-secondary rounded-full overflow-hidden">
@@ -175,14 +175,14 @@ export function ChatArea() {
               <div className="flex-1">
                 <div className="bg-card border-l-4 border-l-primary rounded-r-xl p-4 shadow-sm">
                   <p className="text-foreground text-sm leading-relaxed">
-                    ¡Excelente! He recibido toda la información. Ahora estoy analizando tus
-                    respuestas para generar una estrategia personalizada...
+                    Excellent! I've received all the information. I'm now analyzing your
+                    responses to generate a personalized strategy...
                   </p>
                   <div className="flex items-center gap-2 mt-3">
                     <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                     <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
                     <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
-                    <span className="text-xs text-muted-foreground ml-2">Esperando respuesta, por favor no cierres la pestaña ni la sesión...</span>
+                    <span className="text-xs text-muted-foreground ml-2">Waiting for response, please don't close the tab or session...</span>
                   </div>
                 </div>
               </div>
@@ -196,12 +196,12 @@ export function ChatArea() {
         <div className="flex items-center gap-2 mb-3">
           <button className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-medium hover:bg-primary/20 transition-colors">
             <Package className="w-3 h-3" />
-            Ver Paquetes
+            View Packages
           </button>
-          <span className="text-xs text-muted-foreground">Paquete 1 activo</span>
+          <span className="text-xs text-muted-foreground">Package 1 active</span>
           <div className="ml-auto">
             <span className="px-3 py-1 bg-success/10 text-success text-xs font-medium rounded-full">
-              MODO BORRADOR ACTIVO
+              DRAFT MODE ACTIVE
             </span>
           </div>
         </div>
@@ -215,7 +215,7 @@ export function ChatArea() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Escribe tu mensaje..."
+            placeholder="Type your message..."
             className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground"
           />
           <Button

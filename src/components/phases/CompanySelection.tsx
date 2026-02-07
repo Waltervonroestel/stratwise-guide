@@ -6,21 +6,21 @@ const companyCards = [
   {
     type: 'startup' as CompanyType,
     title: 'Startup',
-    subtitle: 'Pre-seed, primeros clientes o crecimiento temprano',
+    subtitle: 'Pre-seed, early customers, or early growth',
     icon: Rocket,
     gradient: 'from-primary to-red-600',
   },
   {
     type: 'smb' as CompanyType,
     title: 'SMB',
-    subtitle: 'Negocios en operación de 0 a 5+ años',
+    subtitle: 'Businesses operating from 0 to 5+ years',
     icon: TrendingUp,
     gradient: 'from-primary/80 to-primary',
   },
   {
     type: 'enterprise' as CompanyType,
     title: 'Enterprise',
-    subtitle: 'Organizaciones grandes que requieren profundidad estratégica',
+    subtitle: 'Large organizations requiring strategic depth',
     icon: Building2,
     gradient: 'from-slate-600 to-slate-800',
   },
@@ -82,7 +82,7 @@ export function CompanySelection() {
         transition={{ duration: 0.5, delay: 0.1 }}
         className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-3 text-center"
       >
-        Selecciona tu tipo de empresa
+        Select your company type
       </motion.h1>
       <motion.p
         initial={{ opacity: 0, y: -10 }}
@@ -90,7 +90,7 @@ export function CompanySelection() {
         transition={{ duration: 0.5, delay: 0.15 }}
         className="text-muted-foreground text-lg mb-12 text-center max-w-md"
       >
-        Personalizaremos tu experiencia estratégica
+        We'll personalize your strategic experience
       </motion.p>
 
       {/* Cards */}
