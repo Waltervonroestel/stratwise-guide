@@ -13,13 +13,13 @@ const stageOptions = {
     },
     {
       stage: 'pequena-traccion' as CompanyStage,
-      title: 'Pequeña tracción',
+      title: 'Seed',
       description: 'Tiene algunos clientes o usuarios iniciales',
       icon: Zap,
     },
     {
       stage: 'semilla' as CompanyStage,
-      title: 'Semilla',
+      title: 'Grow',
       description: 'Ha obtenido financiamiento semilla con tracción demostrable',
       icon: Rocket,
     },
