@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Rocket, TrendingUp, Building2 } from 'lucide-react';
 import { useAppStore, CompanyType } from '@/store/appStore';
+import fsLogo from '@/assets/fs_logo_without_background.png';
 
 const companyCards = [
   {
@@ -67,12 +68,7 @@ export function CompanySelection() {
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-heading font-bold text-xl">F</span>
-          </div>
-          <span className="font-heading font-bold text-2xl text-foreground">Faststrat</span>
-        </div>
+        <img src={fsLogo} alt="FastStrat" className="h-12 w-auto" />
       </motion.div>
 
       {/* Title */}
