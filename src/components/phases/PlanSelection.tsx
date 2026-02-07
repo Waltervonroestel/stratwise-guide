@@ -93,12 +93,11 @@ export function PlanSelection() {
   const getStageLabel = () => {
     const labels: Record<string, string> = {
       'preseed-construccion': 'Pre-seed/Construcción',
-      'pequena-traccion': 'Pequeña tracción',
-      'semilla': 'Semilla',
-      'smb-preseed': 'Pre-seed/Construcción',
-      'smb-traccion': 'Pequeña tracción',
-      'smb-2-5': '2-5 años',
-      'smb-5plus': '+5 años',
+      'pequena-traccion': 'Seed',
+      'semilla': 'Grow',
+      'smb-preseed': '0-1 años de operación',
+      'smb-traccion': '1-2 años de operación',
+      'smb-2-5': 'Más de 2 años de operación',
       'enterprise-stage': 'Enterprise',
     };
     return companyStage ? labels[companyStage] || '' : '';

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, Sprout, Zap, TrendingUp, Building, Timer, Award, Rocket } from 'lucide-react';
+import { ArrowLeft, Sprout, Zap, TrendingUp, Building, Timer, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore, CompanyStage } from '@/store/appStore';
 
@@ -27,27 +27,21 @@ const stageOptions = {
   smb: [
     {
       stage: 'smb-preseed' as CompanyStage,
-      title: 'Pre-seed/Construcción',
+      title: '0-1 años de operación',
       description: 'Empresa nueva o en reconstrucción',
       icon: Building,
     },
     {
       stage: 'smb-traccion' as CompanyStage,
-      title: 'Pequeña tracción',
+      title: '1-2 años de operación',
       description: 'Con algunos clientes pero crecimiento limitado',
       icon: Zap,
     },
     {
       stage: 'smb-2-5' as CompanyStage,
-      title: '2-5 años',
-      description: 'Empresa establecida con 2-5 años de operación',
+      title: 'Más de 2 años de operación',
+      description: 'Empresa establecida con más de 2 años de operación',
       icon: Timer,
-    },
-    {
-      stage: 'smb-5plus' as CompanyStage,
-      title: '+5 años',
-      description: 'Empresa madura con más de 5 años de operación',
-      icon: Award,
     },
   ],
   enterprise: [],
