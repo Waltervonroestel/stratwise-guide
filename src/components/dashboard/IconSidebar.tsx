@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import fsLogo from '@/assets/fs_logo_without_background.png';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
@@ -32,9 +33,7 @@ export function IconSidebar() {
     <div className="w-16 bg-sidebar flex flex-col items-center py-4 border-r border-sidebar-border">
       {/* Logo */}
       <div className="mb-6">
-        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-          <span className="text-primary-foreground font-heading font-bold text-xl">F</span>
-        </div>
+        <img src={fsLogo} alt="FastStrat" className="w-10 h-10 object-contain" />
       </div>
 
       {/* Back Button */}
