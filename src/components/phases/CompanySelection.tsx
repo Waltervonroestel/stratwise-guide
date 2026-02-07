@@ -68,7 +68,7 @@ export function CompanySelection() {
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <img src={fsLogo} alt="FastStrat" className="h-12 w-auto" />
+        <img src={fsLogo} alt="FastStrat" className="h-24 w-auto" />
       </motion.div>
 
       {/* Title */}
