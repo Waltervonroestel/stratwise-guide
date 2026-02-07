@@ -74,7 +74,7 @@ export function StageSelection() {
 
   const stages = stageOptions[companyType];
   const companyLabel = companyType === 'startup' ? 'Startup' : 'SMB';
-  const totalSteps = 4;
+  const totalSteps = 5;
   const currentStep = 2;
 
   const handleStageSelect = (stage: CompanyStage) => {
