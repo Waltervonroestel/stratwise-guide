@@ -74,8 +74,8 @@ export function DocumentUpload() {
   const { goBack, advanceToDashboard, companyType } = useAppStore();
   const [categories, setCategories] = useState<DocumentCategory[]>(initialCategories);
 
-  const totalSteps = companyType === 'enterprise' ? 4 : 5;
-  const currentStep = totalSteps;
+  const totalSteps = 5;
+  const currentStep = 5;
 
   const totalFiles = categories.reduce((sum, cat) => sum + cat.files.length, 0);
 
