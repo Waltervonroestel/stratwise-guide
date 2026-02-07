@@ -1,53 +1,56 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, Check, Sparkles, Crown } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore, PlanType, FlowType } from '@/store/appStore';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 const allPlans = [
   {
     type: 'entry' as PlanType,
-    name: 'Entry Plan',
-    price: '$',
-    priceAmount: '49',
-    period: '/mes',
+    name: 'Free Trial',
+    subtitle: 'Exploring the power of our insights.',
+    priceAmount: '0',
+    period: 'Free trial is available for 7 days',
     tag: null,
+    cta: 'Start 7-day trial',
     features: [
-      '5 búsquedas por insight',
-      'Calidad estándar',
-      'Dashboard básico',
-      'Soporte por email',
+      'Complete questionnaire',
+      'Access insights on:',
+      'Research, Data, Brand, Product, Media and Marketing',
     ],
   },
   {
     type: 'enterprise' as PlanType,
-    name: 'Enterprise',
-    price: '$$',
-    priceAmount: '149',
-    period: '/mes',
-    tag: 'Recomendado',
+    name: 'Foundation Plan',
+    subtitle: 'Startups and businesses that need a clear, professional marketing strategy.',
+    priceAmount: '499',
+    period: 'One-time payment',
+    tag: null,
+    cta: 'Choose Foundation',
     features: [
-      '20 búsquedas por insight',
-      'Calidad por encima del mercado',
-      '1 Reporte mensual',
-      'Análisis de competencia',
-      'Soporte prioritario',
+      '1 Custom Branded Annual Marketing Plan',
+      'Industry and Market Research',
+      'SWOT Analysis',
+      'Buyer Persona Definition',
+      'Strategies, Tactics & KPIs',
+      '2 user seats (1 free, 1 paid)',
     ],
   },
   {
     type: 'premium' as PlanType,
-    name: 'Top Consultancy',
-    price: '$$$',
-    priceAmount: '349',
-    period: '/mes',
-    tag: 'Premium',
+    name: 'Growth Suite',
+    subtitle: 'Businesses looking to execute, measure, and optimize their marketing continuously.',
+    priceAmount: '999',
+    period: 'As low as',
+    tag: 'Best Value',
+    cta: 'Choose Growth',
     features: [
-      '200 búsquedas por insight',
-      'Frameworks Big Four (McKinsey)',
-      'Múltiples reportes',
-      'Consultor AI dedicado',
-      'Integraciones avanzadas',
-      'API Access',
+      'Everything in the Foundation Plan, plus:',
+      'AI Content Generator (up to 500)',
+      'KPI Dashboard to measure results',
+      'Integrate with your platforms (APIs) *Coming soon',
+      'Create weekly, monthly & quarterly reports *Coming soon',
+      '3 user seats (2 free, 1 paid)',
     ],
   },
 ];
@@ -69,17 +72,10 @@ const cardVariants = {
 export function PlanSelection() {
   const { goBack, setPlanType, companyType, companyStage, flowType } = useAppStore();
   
-  // Filter plans based on company type - Enterprise doesn't get Entry Level
-  const availablePlans = useMemo(() => {
-    if (companyType === 'enterprise') {
-      return allPlans.filter(plan => plan.type !== 'entry');
-    }
-    return allPlans;
-  }, [companyType]);
+  // All plans available for everyone now
+  const availablePlans = allPlans;
 
-  const [selectedPlan, setSelectedPlan] = useState<PlanType>(
-    companyType === 'enterprise' ? 'enterprise' : 'enterprise'
-  );
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>('enterprise');
 
   const totalSteps = companyType === 'enterprise' ? 4 : 5;
   const currentStep = totalSteps - 1;
@@ -205,8 +201,7 @@ export function PlanSelection() {
         }`}>
           {availablePlans.map((plan) => {
             const isSelected = selectedPlan === plan.type;
-            const isRecommended = plan.tag === 'Recomendado';
-            const isPremium = plan.tag === 'Premium';
+            const isBestValue = plan.tag === 'Best Value';
 
             return (
               <motion.div
@@ -218,38 +213,55 @@ export function PlanSelection() {
                   isSelected
                     ? 'border-primary ring-2 ring-primary/20'
                     : ''
-                } ${isRecommended ? 'md:-mt-4 md:mb-4' : ''}`}
+                } ${isBestValue ? 'md:-mt-4 md:mb-4' : ''}`}
               >
                 {/* Tag */}
                 {plan.tag && (
                   <div
-                    className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
-                      isRecommended
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                    }`}
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 bg-primary text-primary-foreground"
                   >
-                    {isPremium && <Crown className="w-3 h-3" />}
-                    {isRecommended && <Sparkles className="w-3 h-3" />}
+                    <Sparkles className="w-3 h-3" />
                     {plan.tag}
                   </div>
                 )}
 
                 {/* Content */}
-                <div className="text-center mb-6 pt-2">
-                  <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
+                <div className="text-center mb-4 pt-2">
+                  <h3 className="font-heading text-xl font-semibold text-foreground mb-1">
                     {plan.name}
                   </h3>
-                  <div className="flex items-baseline justify-center gap-1">
+                  <p className="text-muted-foreground text-xs mb-4 leading-relaxed">
+                    {plan.subtitle}
+                  </p>
+                  <div className="flex flex-col items-center">
+                    {plan.period === 'As low as' && (
+                      <span className="text-xs text-muted-foreground mb-1">{plan.period}</span>
+                    )}
                     <span className="text-4xl font-bold text-foreground">
                       ${plan.priceAmount}
                     </span>
-                    <span className="text-muted-foreground text-sm">{plan.period}</span>
+                    {plan.period !== 'As low as' && (
+                      <span className="text-muted-foreground text-xs mt-1">{plan.period}</span>
+                    )}
                   </div>
                 </div>
 
+                {/* CTA / Selection */}
+                <div
+                  className={`w-full py-2.5 rounded-lg text-center text-sm font-medium transition-colors mb-5 ${
+                    isSelected
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-secondary-foreground'
+                  }`}
+                >
+                  {isSelected ? 'Seleccionado' : plan.cta}
+                </div>
+
+                {/* Key Features Header */}
+                <p className="text-xs font-semibold text-foreground mb-3">Key features</p>
+
                 {/* Features */}
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-2.5">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -257,17 +269,6 @@ export function PlanSelection() {
                     </li>
                   ))}
                 </ul>
-
-                {/* Selection indicator */}
-                <div
-                  className={`w-full py-2 rounded-lg text-center text-sm font-medium transition-colors ${
-                    isSelected
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground'
-                  }`}
-                >
-                  {isSelected ? 'Seleccionado' : 'Seleccionar'}
-                </div>
               </motion.div>
             );
           })}
