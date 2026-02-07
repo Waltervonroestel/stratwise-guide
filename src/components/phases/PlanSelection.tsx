@@ -76,8 +76,8 @@ export function PlanSelection() {
 
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('enterprise');
 
-  const totalSteps = companyType === 'enterprise' ? 4 : 5;
-  const currentStep = totalSteps - 1;
+  const totalSteps = 5;
+  const currentStep = 4;
 
   const handleContinue = () => {
     if (selectedPlan) {

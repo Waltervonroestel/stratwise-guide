@@ -47,8 +47,8 @@ export function FlowSelection() {
   const availableFlows = getAvailableFlows(companyType, companyStage);
   const flows = flowOptions.filter(f => availableFlows.includes(f.type));
   
-  const totalSteps = companyType === 'enterprise' ? 4 : 5;
-  const currentStep = companyType === 'enterprise' ? 2 : 3;
+  const totalSteps = 5;
+  const currentStep = 3;
 
   const getCompanyLabel = () => {
     if (companyType === 'startup') return 'Startup';
