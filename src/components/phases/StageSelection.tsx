@@ -19,7 +19,7 @@ const stageOptions = {
     },
     {
       stage: 'semilla' as CompanyStage,
-      title: 'Grow',
+      title: 'Growth',
       description: 'Has obtained seed funding with demonstrable traction',
       icon: Rocket,
     },
