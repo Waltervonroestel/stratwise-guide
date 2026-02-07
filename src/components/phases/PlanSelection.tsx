@@ -163,7 +163,7 @@ export function PlanSelection() {
             Choose your plan
           </h1>
           <p className="text-muted-foreground text-sm">
-            {getCompanyLabel()} • {getStageLabel()} • {getFlowLabel(flowType)} Flow
+            {getCompanyLabel()} • {getStageLabel()} • {getFlowLabel(flowType)} Workflow
           </p>
         </div>
       </motion.div>
@@ -184,7 +184,7 @@ export function PlanSelection() {
               {getStageLabel()}
             </span>
             <span className="px-3 py-1 bg-primary/10 rounded-full text-xs text-primary font-medium">
-              {getFlowLabel(flowType)} Flow
+              {getFlowLabel(flowType)} Workflow
             </span>
           </div>
         </div>
