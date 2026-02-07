@@ -81,8 +81,8 @@ export function PlanSelection() {
     companyType === 'enterprise' ? 'enterprise' : 'enterprise'
   );
 
-  const totalSteps = companyType === 'enterprise' ? 3 : 4;
-  const currentStep = totalSteps;
+  const totalSteps = companyType === 'enterprise' ? 4 : 5;
+  const currentStep = totalSteps - 1;
 
   const handleContinue = () => {
     if (selectedPlan) {

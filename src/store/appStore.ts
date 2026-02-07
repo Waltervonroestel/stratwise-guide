@@ -9,7 +9,7 @@ export type CompanyStage =
   | null;
 export type FlowType = 'completo' | 'estrategico' | 'tactico' | null;
 export type PlanType = 'entry' | 'enterprise' | 'premium' | null;
-export type Phase = 1 | 2 | 3 | 4 | 5; // 1=type, 2=stage, 3=flow, 4=plan, 5=dashboard
+export type Phase = 1 | 2 | 3 | 4 | 5 | 6; // 1=type, 2=stage, 3=flow, 4=plan, 5=documents, 6=dashboard
 export type NotificationFilter = 'todos' | 'insights' | 'reportes' | 'drafts';
 export type ActiveView = 'chat' | 'insight' | 'report' | 'draft';
 
@@ -98,6 +98,7 @@ interface AppState {
   setActiveView: (view: ActiveView) => void;
   openNotification: (notification: Notification) => void;
   purchaseDocumentAddon: () => void;
+  advanceToDashboard: () => void;
   resetFlow: () => void;
 }
 
@@ -195,6 +196,7 @@ export const useAppStore = create<AppState>()(
       
       setFlowType: (flowType) => set({ flowType, phase: 4 }),
       setPlanType: (planType) => set({ planType, phase: 5 }),
+      advanceToDashboard: () => set({ phase: 6 }),
       setNotificationFilter: (notificationFilter) => set({ notificationFilter }),
       setQuestionnaireStep: (questionnaireStep) => set({ questionnaireStep }),
       updateQuestionnaireData: (data) =>
@@ -210,17 +212,14 @@ export const useAppStore = create<AppState>()(
         } else if (phase === 2) {
           set({ phase: 1, companyType: null, companyStage: null });
         } else if (phase === 3) {
-          // If enterprise, go back to phase 1
           if (companyType === 'enterprise') {
             set({ phase: 1, companyType: null, companyStage: null, flowType: null });
           } else {
             set({ phase: 2, companyStage: null, flowType: null });
           }
         } else if (phase === 4) {
-          // Check if flow was auto-selected (only 1 option available)
           const availableFlows = getAvailableFlows(companyType, companyStage);
           if (availableFlows.length === 1) {
-            // Go back to stage selection (or company type for enterprise)
             if (companyType === 'enterprise') {
               set({ phase: 1, companyType: null, companyStage: null, flowType: null, planType: null });
             } else {
@@ -231,6 +230,8 @@ export const useAppStore = create<AppState>()(
           }
         } else if (phase === 5) {
           set({ phase: 4, planType: null });
+        } else if (phase === 6) {
+          set({ phase: 5 });
         }
       },
       
