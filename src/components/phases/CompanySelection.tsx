@@ -13,7 +13,7 @@ const companyCards = [
   {
     type: 'smb' as CompanyType,
     title: 'SMB',
-    subtitle: 'Businesses operating from 0 to 5+ years',
+    subtitle: 'Businesses operating from 0 to 2+ years',
     icon: TrendingUp,
     gradient: 'from-primary/80 to-primary',
   },
