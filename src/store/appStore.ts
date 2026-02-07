@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 export type CompanyType = 'startup' | 'smb' | 'enterprise' | null;
 export type CompanyStage = 
   | 'preseed-construccion' | 'pequena-traccion' | 'semilla' // Startup stages
-  | 'smb-preseed' | 'smb-traccion' | 'smb-2-5' | 'smb-5plus' // SMB stages
+  | 'smb-preseed' | 'smb-traccion' | 'smb-2-5' // SMB stages
   | 'enterprise-stage' // Enterprise stage
   | null;
 export type FlowType = 'completo' | 'estrategico' | 'tactico' | null;
@@ -51,9 +51,6 @@ export function getAvailableFlows(companyType: CompanyType, stage: CompanyStage)
     return ['completo', 'estrategico', 'tactico'];
   }
   if (companyType === 'smb' && stage === 'smb-2-5') {
-    return ['completo', 'estrategico'];
-  }
-  if (companyType === 'smb' && stage === 'smb-5plus') {
     return ['completo', 'estrategico', 'tactico'];
   }
   if (companyType === 'enterprise') {
