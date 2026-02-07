@@ -120,7 +120,7 @@ export function FlowSelection() {
         </Button>
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-            What type of flow do you need?
+            What type of workflow do you need?
           </h1>
           <p className="text-muted-foreground text-sm">
             {getCompanyLabel()} • {getStageLabel()}
