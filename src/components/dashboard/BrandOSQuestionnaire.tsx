@@ -31,9 +31,9 @@ const tacticSteps = [
 ];
 
 const flowLabels: Record<string, { label: string; description: string; icon: typeof FileText }> = {
-  completo: { label: 'Flujo Completo', description: 'Plan desde cero (Q0-Q58)', icon: FileText },
-  estrategico: { label: 'Flujo Estratégico', description: 'Estrategias basadas en tu plan', icon: Target },
-  tactico: { label: 'Flujo Táctico', description: 'Tácticas de implementación', icon: Wrench },
+  completo: { label: 'Blueprint Builder', description: 'Full plan from scratch (Q0-Q58)', icon: FileText },
+  estrategico: { label: 'Strategy Accelerator', description: 'Automated strategy insights', icon: Target },
+  tactico: { label: 'Action Autopilot', description: 'Automated execution tactics', icon: Wrench },
 };
 
 const getStepsForFlow = (flowType: FlowType) => {

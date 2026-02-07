@@ -100,9 +100,9 @@ export function PlanSelection() {
 
   const getFlowLabel = (flow: FlowType) => {
     const labels: Record<string, string> = {
-      'completo': 'Complete',
-      'estrategico': 'Strategic',
-      'tactico': 'Tactical',
+      'completo': 'Blueprint Builder',
+      'estrategico': 'Strategy Accelerator',
+      'tactico': 'Action Autopilot',
     };
     return flow ? labels[flow] || '' : '';
   };

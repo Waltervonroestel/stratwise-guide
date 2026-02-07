@@ -1,29 +1,34 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, FileText, Target, Wrench } from 'lucide-react';
+import { ArrowLeft, FileText, Target, Wrench, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore, FlowType, getAvailableFlows } from '@/store/appStore';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const flowOptions = [
   {
     type: 'completo' as FlowType,
-    title: 'Complete',
-    description: 'Full plan from scratch (all questions)',
+    title: 'Blueprint Builder',
+    description: 'Build your full marketing strategy from scratch — step by step, question by question.',
     icon: FileText,
-    detail: 'Ideal if you\'re starting out or want a comprehensive strategy',
+    detail: 'Ideal if you\'re starting out or want a comprehensive strategy tailored to your business',
+    available: true,
   },
   {
     type: 'estrategico' as FlowType,
-    title: 'Strategic',
-    description: 'Strategies only (you already have a main plan)',
+    title: 'Strategy Accelerator',
+    description: 'We automate the heavy lifting so you can skip ahead to a refined, data-driven strategy in less time.',
     icon: Target,
-    detail: 'Perfect if you have direction but need to refine your approach',
+    detail: 'Coming soon — available in approximately 2 months',
+    available: false,
   },
   {
     type: 'tactico' as FlowType,
-    title: 'Tactical',
-    description: 'Implementation tactics only',
+    title: 'Action Autopilot',
+    description: 'Let AI handle the execution plan — get concrete, ready-to-launch tactics delivered automatically.',
     icon: Wrench,
-    detail: 'For when you need concrete execution actions',
+    detail: 'Coming soon — available in approximately 2 months',
+    available: false,
   },
 ];
 
@@ -69,8 +74,15 @@ export function FlowSelection() {
     return companyStage ? labels[companyStage] || '' : '';
   };
 
-  const handleFlowSelect = (flow: FlowType) => {
-    setFlowType(flow);
+  const handleFlowSelect = (option: typeof flowOptions[0]) => {
+    if (!option.available) {
+      toast.info('Coming Soon!', {
+        description: `${option.title} is currently under development and will be available in approximately 2 months. Stay tuned!`,
+        duration: 4000,
+      });
+      return;
+    }
+    setFlowType(option.type);
   };
 
   return (
@@ -139,25 +151,53 @@ export function FlowSelection() {
       >
         {flows.map((option) => {
           const Icon = option.icon;
+          const isDisabled = !option.available;
           return (
             <motion.div
               key={option.type}
               variants={cardVariants}
-              whileHover={{ y: -4, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleFlowSelect(option.type)}
-              className="card-interactive p-6 cursor-pointer"
+              whileHover={isDisabled ? {} : { y: -4, scale: 1.02 }}
+              whileTap={isDisabled ? {} : { scale: 0.98 }}
+              onClick={() => handleFlowSelect(option)}
+              className={`relative card-interactive p-6 cursor-pointer transition-all ${
+                isDisabled
+                  ? 'opacity-50 grayscale border-muted'
+                  : 'ring-2 ring-primary/20 border-primary shadow-lg'
+              }`}
             >
-              <div className="w-14 h-14 mb-4 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Icon className="w-7 h-7 text-primary" />
+              {/* Coming Soon Badge */}
+              {isDisabled && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 bg-muted text-muted-foreground border border-border">
+                  <Lock className="w-3 h-3" />
+                  Coming Soon
+                </div>
+              )}
+
+              {/* Recommended Badge for Blueprint Builder */}
+              {option.available && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 bg-primary text-primary-foreground">
+                  ✦ Recommended
+                </div>
+              )}
+
+              <div className={`w-14 h-14 mb-4 rounded-xl flex items-center justify-center ${
+                isDisabled ? 'bg-muted' : 'bg-primary/10'
+              }`}>
+                <Icon className={`w-7 h-7 ${isDisabled ? 'text-muted-foreground' : 'text-primary'}`} />
               </div>
-              <h3 className="font-heading text-xl font-semibold text-foreground mb-2">
+              <h3 className={`font-heading text-xl font-semibold mb-2 ${
+                isDisabled ? 'text-muted-foreground' : 'text-foreground'
+              }`}>
                 {option.title}
               </h3>
-              <p className="text-muted-foreground text-sm mb-3">
+              <p className={`text-sm mb-3 ${
+                isDisabled ? 'text-muted-foreground/60' : 'text-muted-foreground'
+              }`}>
                 {option.description}
               </p>
-              <p className="text-xs text-muted-foreground/80 italic">
+              <p className={`text-xs italic ${
+                isDisabled ? 'text-muted-foreground/50' : 'text-muted-foreground/80'
+              }`}>
                 {option.detail}
               </p>
             </motion.div>
