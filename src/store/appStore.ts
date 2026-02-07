@@ -11,7 +11,7 @@ export type CompanyStage =
 export type FlowType = 'completo' | 'estrategico' | 'tactico' | null;
 export type PlanType = 'entry' | 'enterprise' | 'premium' | null;
 export type Phase = 1 | 2 | 3 | 4 | 5 | 6; // 1=type, 2=stage, 3=flow, 4=plan, 5=documents, 6=dashboard
-export type NotificationFilter = 'todos' | 'insights' | 'reportes' | 'drafts';
+export type NotificationFilter = 'all' | 'insights' | 'reports' | 'drafts';
 export type ActiveView = 'chat' | 'insight' | 'report' | 'draft';
 
 export interface Notification {
@@ -123,32 +123,32 @@ const mockNotifications: Notification[] = [
   {
     id: '1',
     type: 'insight',
-    title: 'Oportunidad de mercado detectada',
-    description: 'Nuevo segmento B2B identificado en sector tecnológico. Se ha detectado un crecimiento del 45% en demanda de servicios de consultoría estratégica para empresas de tecnología en la región.',
+    title: 'Market opportunity detected',
+    description: 'New B2B segment identified in the technology sector. A 45% growth in demand for strategic consulting services for technology companies has been detected in the region.',
     status: 'new',
     timestamp: new Date(),
   },
   {
     id: '2',
     type: 'report',
-    title: 'Reporte de Competencia Q3',
-    description: 'Análisis completo de 15 competidores directos con métricas de posicionamiento, estrategias de precios y canales de distribución.',
+    title: 'Competition Report Q3',
+    description: 'Complete analysis of 15 direct competitors with positioning metrics, pricing strategies, and distribution channels.',
     status: 'read',
     timestamp: new Date(Date.now() - 86400000),
   },
   {
     id: '3',
     type: 'draft',
-    title: 'Campaña Email Marketing',
-    description: 'Borrador de secuencia de 5 emails para nurturing de leads B2B. Requiere revisión de copy y CTAs antes de activación.',
+    title: 'Email Marketing Campaign',
+    description: 'Draft sequence of 5 emails for B2B lead nurturing. Requires copy and CTA review before activation.',
     status: 'critical',
     timestamp: new Date(Date.now() - 3600000),
   },
   {
     id: '4',
     type: 'processing',
-    title: 'Analizando respuestas...',
-    description: 'Generando estrategia personalizada basada en las respuestas de la conversación BrandOS.',
+    title: 'Analyzing responses...',
+    description: 'Generating personalized strategy based on BrandOS conversation responses.',
     status: 'processing',
     timestamp: new Date(),
   },
@@ -163,7 +163,7 @@ export const useAppStore = create<AppState>()(
       companyStage: null,
       flowType: null,
       planType: null,
-      notificationFilter: 'todos',
+      notificationFilter: 'all',
       notifications: mockNotifications,
       questionnaireStep: 1,
       questionnaireData: initialQuestionnaireData,
@@ -175,7 +175,6 @@ export const useAppStore = create<AppState>()(
       setPhase: (phase) => set({ phase }),
       
       setCompanyType: (companyType) => {
-        // All company types go to phase 2 (stage for startup/smb, employee count for enterprise)
         if (companyType === 'enterprise') {
           set({ companyType, companyStage: 'enterprise-stage', phase: 2 });
         } else {
@@ -191,7 +190,6 @@ export const useAppStore = create<AppState>()(
         const { companyType } = get();
         const availableFlows = getAvailableFlows(companyType, companyStage);
         
-        // If only one flow available, auto-select and skip to plan
         if (availableFlows.length === 1) {
           set({ companyStage, flowType: availableFlows[0], phase: 4 });
         } else {

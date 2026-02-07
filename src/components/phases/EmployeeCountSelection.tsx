@@ -6,18 +6,18 @@ import { useAppStore, EnterpriseSize } from '@/store/appStore';
 const sizeOptions: { size: EnterpriseSize; title: string; description: string }[] = [
   {
     size: '0-50',
-    title: '0 a 50 empleados',
-    description: 'Empresa pequeña o en crecimiento inicial',
+    title: '0 to 50 employees',
+    description: 'Small company or in early growth',
   },
   {
     size: '50-100',
-    title: '50 a 100 empleados',
-    description: 'Empresa mediana con estructura establecida',
+    title: '50 to 100 employees',
+    description: 'Mid-size company with established structure',
   },
   {
     size: '100-500',
-    title: '100 a 500 empleados',
-    description: 'Empresa grande con operaciones complejas',
+    title: '100 to 500 employees',
+    description: 'Large company with complex operations',
   },
 ];
 
@@ -56,8 +56,8 @@ export function EmployeeCountSelection() {
         className="mb-8"
       >
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-primary font-medium">Paso {currentStep}</span>
-          <span>de</span>
+          <span className="text-primary font-medium">Step {currentStep}</span>
+          <span>of</span>
           <span>{totalSteps}</span>
         </div>
         <div className="flex gap-1 mt-2">
@@ -88,10 +88,10 @@ export function EmployeeCountSelection() {
         </Button>
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-            ¿Cuántos empleados tiene tu empresa?
+            How many employees does your company have?
           </h1>
           <p className="text-muted-foreground text-sm">
-            Selecciona el rango que mejor describe el tamaño de tu organización
+            Select the range that best describes your organization's size
           </p>
         </div>
       </motion.div>
@@ -131,7 +131,7 @@ export function EmployeeCountSelection() {
         className="mt-8"
       >
         <Button variant="outline" onClick={goBack}>
-          Volver
+          Back
         </Button>
       </motion.div>
     </motion.div>

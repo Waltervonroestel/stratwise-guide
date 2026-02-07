@@ -10,9 +10,9 @@ import { useAppStore, NotificationFilter } from '@/store/appStore';
 import { Button } from '@/components/ui/button';
 
 const filters: { value: NotificationFilter; label: string }[] = [
-  { value: 'todos', label: 'Todos' },
+  { value: 'all', label: 'All' },
   { value: 'insights', label: 'Insights' },
-  { value: 'reportes', label: 'Reportes' },
+  { value: 'reports', label: 'Reports' },
   { value: 'drafts', label: 'Drafts' },
 ];
 
@@ -52,9 +52,9 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
   const { notifications, notificationFilter, setNotificationFilter, openNotification } = useAppStore();
 
   const filteredNotifications = notifications.filter((n) => {
-    if (notificationFilter === 'todos') return true;
+    if (notificationFilter === 'all') return true;
     if (notificationFilter === 'insights') return n.type === 'insight';
-    if (notificationFilter === 'reportes') return n.type === 'report';
+    if (notificationFilter === 'reports') return n.type === 'report';
     if (notificationFilter === 'drafts') return n.type === 'draft';
     return true;
   });
@@ -76,7 +76,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
     >
       {/* Header */}
       <div className="p-5 border-b border-border flex items-center justify-between bg-card">
-        <h3 className="font-heading font-semibold text-lg text-foreground">Notificaciones</h3>
+        <h3 className="font-heading font-semibold text-lg text-foreground">Notifications</h3>
         <Button variant="ghost" size="icon" onClick={onClose} className="h-9 w-9">
           <X className="w-5 h-5" />
         </Button>
@@ -103,7 +103,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       <div className="max-h-[400px] overflow-y-auto bg-card">
         {filteredNotifications.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground text-base">
-            No hay notificaciones
+            No notifications
           </div>
         ) : (
           filteredNotifications.map((notification, index) => {
@@ -152,7 +152,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                     </p>
                     {notification.status === 'critical' && (
                       <span className="inline-block mt-2 text-sm px-3 py-1 rounded bg-warning text-white font-medium">
-                        Requiere revisión
+                        Review required
                       </span>
                     )}
                   </div>

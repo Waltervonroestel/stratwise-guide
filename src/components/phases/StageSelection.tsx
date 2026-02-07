@@ -7,40 +7,40 @@ const stageOptions = {
   startup: [
     {
       stage: 'preseed-construccion' as CompanyStage,
-      title: 'Pre-seed/Construcción',
-      description: 'En fase de ideación o construcción inicial',
+      title: 'Pre-seed/Building',
+      description: 'In the ideation or initial building phase',
       icon: Sprout,
     },
     {
       stage: 'pequena-traccion' as CompanyStage,
       title: 'Seed',
-      description: 'Tiene algunos clientes o usuarios iniciales',
+      description: 'Has some initial clients or users',
       icon: Zap,
     },
     {
       stage: 'semilla' as CompanyStage,
       title: 'Grow',
-      description: 'Ha obtenido financiamiento semilla con tracción demostrable',
+      description: 'Has obtained seed funding with demonstrable traction',
       icon: Rocket,
     },
   ],
   smb: [
     {
       stage: 'smb-preseed' as CompanyStage,
-      title: '0-1 años de operación',
-      description: 'Empresa nueva o en reconstrucción',
+      title: '0-1 years of operation',
+      description: 'New or rebuilding business',
       icon: Building,
     },
     {
       stage: 'smb-traccion' as CompanyStage,
-      title: '1-2 años de operación',
-      description: 'Con algunos clientes pero crecimiento limitado',
+      title: '1-2 years of operation',
+      description: 'Some clients but limited growth',
       icon: Zap,
     },
     {
       stage: 'smb-2-5' as CompanyStage,
-      title: 'Más de 2 años de operación',
-      description: 'Empresa establecida con más de 2 años de operación',
+      title: '2+ years of operation',
+      description: 'Established business with over 2 years of operation',
       icon: Timer,
     },
   ],
@@ -90,8 +90,8 @@ export function StageSelection() {
         className="mb-8"
       >
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-primary font-medium">Paso {currentStep}</span>
-          <span>de</span>
+          <span className="text-primary font-medium">Step {currentStep}</span>
+          <span>of</span>
           <span>{totalSteps}</span>
         </div>
         <div className="flex gap-1 mt-2">
@@ -122,10 +122,10 @@ export function StageSelection() {
         </Button>
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-            ¿En qué etapa está tu {companyLabel}?
+            What stage is your {companyLabel} at?
           </h1>
           <p className="text-muted-foreground text-sm">
-            Selecciona la etapa que mejor describe tu situación actual
+            Select the stage that best describes your current situation
           </p>
         </div>
       </motion.div>
@@ -172,7 +172,7 @@ export function StageSelection() {
         className="mt-8"
       >
         <Button variant="outline" onClick={goBack}>
-          Volver
+          Back
         </Button>
       </motion.div>
     </motion.div>

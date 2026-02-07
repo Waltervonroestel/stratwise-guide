@@ -6,24 +6,24 @@ import { useAppStore, FlowType, getAvailableFlows } from '@/store/appStore';
 const flowOptions = [
   {
     type: 'completo' as FlowType,
-    title: 'Completo',
-    description: 'Plan completo desde cero (todas las preguntas)',
+    title: 'Complete',
+    description: 'Full plan from scratch (all questions)',
     icon: FileText,
-    detail: 'Ideal si estás empezando o quieres una estrategia integral',
+    detail: 'Ideal if you\'re starting out or want a comprehensive strategy',
   },
   {
     type: 'estrategico' as FlowType,
-    title: 'Estratégico',
-    description: 'Solo estrategias (ya tienes plan principal)',
+    title: 'Strategic',
+    description: 'Strategies only (you already have a main plan)',
     icon: Target,
-    detail: 'Perfecto si ya tienes dirección pero necesitas refinar tu enfoque',
+    detail: 'Perfect if you have direction but need to refine your approach',
   },
   {
     type: 'tactico' as FlowType,
-    title: 'Táctico',
-    description: 'Solo tácticas de implementación',
+    title: 'Tactical',
+    description: 'Implementation tactics only',
     icon: Wrench,
-    detail: 'Para cuando necesitas acciones concretas de ejecución',
+    detail: 'For when you need concrete execution actions',
   },
 ];
 
@@ -58,13 +58,12 @@ export function FlowSelection() {
 
   const getStageLabel = () => {
     const labels: Record<string, string> = {
-      'preseed-construccion': 'Pre-seed/Construcción',
-      'pequena-traccion': 'Pequeña tracción',
-      'semilla': 'Semilla',
-      'smb-preseed': 'Pre-seed/Construcción',
-      'smb-traccion': 'Pequeña tracción',
-      'smb-2-5': '2-5 años',
-      'smb-5plus': '+5 años',
+      'preseed-construccion': 'Pre-seed/Building',
+      'pequena-traccion': 'Seed',
+      'semilla': 'Grow',
+      'smb-preseed': '0-1 years',
+      'smb-traccion': '1-2 years',
+      'smb-2-5': '2+ years',
       'enterprise-stage': 'Enterprise',
     };
     return companyStage ? labels[companyStage] || '' : '';
@@ -89,8 +88,8 @@ export function FlowSelection() {
         className="mb-8"
       >
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="text-primary font-medium">Paso {currentStep}</span>
-          <span>de</span>
+          <span className="text-primary font-medium">Step {currentStep}</span>
+          <span>of</span>
           <span>{totalSteps}</span>
         </div>
         <div className="flex gap-1 mt-2">
@@ -121,7 +120,7 @@ export function FlowSelection() {
         </Button>
         <div>
           <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-            ¿Qué tipo de flujo necesitas?
+            What type of flow do you need?
           </h1>
           <p className="text-muted-foreground text-sm">
             {getCompanyLabel()} • {getStageLabel()}
@@ -174,7 +173,7 @@ export function FlowSelection() {
         className="mt-8"
       >
         <Button variant="outline" onClick={goBack}>
-          Volver
+          Back
         </Button>
       </motion.div>
     </motion.div>

@@ -8,7 +8,7 @@ const competitors = [
   { name: 'Competitor B', market: 18, growth: -3, trend: 'down' },
   { name: 'Competitor C', market: 15, growth: 8, trend: 'up' },
   { name: 'Competitor D', market: 12, growth: 0, trend: 'neutral' },
-  { name: 'Tu Empresa', market: 8, growth: 45, trend: 'up', highlight: true },
+  { name: 'Your Company', market: 8, growth: 45, trend: 'up', highlight: true },
 ];
 
 export function ReportView() {
@@ -35,20 +35,19 @@ export function ReportView() {
             </div>
             <div>
               <h1 className="font-heading font-semibold text-foreground">{selectedNotification.title}</h1>
-              <p className="text-xs text-muted-foreground">Actualizado hace 24 horas</p>
+              <p className="text-xs text-muted-foreground">Updated 24 hours ago</p>
             </div>
           </div>
         </div>
         <Button variant="outline" className="gap-2">
           <Download className="w-4 h-4" />
-          Descargar
+          Download
         </Button>
       </header>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Summary */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -56,14 +55,13 @@ export function ReportView() {
             className="bg-card border border-border rounded-xl p-6 shadow-sm"
           >
             <h2 className="font-heading text-lg font-semibold text-foreground mb-4">
-              Resumen Ejecutivo
+              Executive Summary
             </h2>
             <p className="text-muted-foreground leading-relaxed">
               {selectedNotification.description}
             </p>
           </motion.div>
 
-          {/* Stats Grid */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -71,9 +69,9 @@ export function ReportView() {
             className="grid grid-cols-1 md:grid-cols-3 gap-4"
           >
             {[
-              { label: 'Competidores Analizados', value: '15', change: '+3 vs Q2' },
-              { label: 'Cuota de Mercado Promedio', value: '12%', change: '-2% vs Q2' },
-              { label: 'Crecimiento Sector', value: '+18%', change: 'YoY' },
+              { label: 'Competitors Analyzed', value: '15', change: '+3 vs Q2' },
+              { label: 'Average Market Share', value: '12%', change: '-2% vs Q2' },
+              { label: 'Sector Growth', value: '+18%', change: 'YoY' },
             ].map((stat, idx) => (
               <div key={idx} className="bg-card border border-border rounded-xl p-5">
                 <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
@@ -83,7 +81,6 @@ export function ReportView() {
             ))}
           </motion.div>
 
-          {/* Competitor Table */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -92,7 +89,7 @@ export function ReportView() {
           >
             <div className="p-4 border-b border-border">
               <h3 className="font-heading font-semibold text-foreground">
-                Análisis Comparativo
+                Comparative Analysis
               </h3>
             </div>
             <div className="overflow-x-auto">
@@ -100,16 +97,16 @@ export function ReportView() {
                 <thead className="bg-secondary/50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Empresa
+                      Company
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Cuota de Mercado
+                      Market Share
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Crecimiento
+                      Growth
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Tendencia
+                      Trend
                     </th>
                   </tr>
                 </thead>

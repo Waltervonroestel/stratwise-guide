@@ -6,24 +6,24 @@ import { useAppStore } from '@/store/appStore';
 import { useState } from 'react';
 
 const emailDraft = {
-  subject: 'Descubre cómo optimizar tu estrategia de crecimiento',
-  preview: 'Hola {nombre}, hemos identificado oportunidades clave para tu negocio...',
-  body: `Hola {nombre},
+  subject: 'Discover how to optimize your growth strategy',
+  preview: 'Hi {name}, we\'ve identified key opportunities for your business...',
+  body: `Hi {name},
 
-Esperamos que este mensaje te encuentre bien. Hemos estado analizando las tendencias del mercado y queremos compartir contigo algunas oportunidades que podrían ser relevantes para {empresa}.
+We hope this message finds you well. We've been analyzing market trends and want to share some opportunities that could be relevant for {company}.
 
-**Puntos clave que hemos identificado:**
+**Key points we've identified:**
 
-1. El sector tecnológico está experimentando un crecimiento del 45% en demanda de servicios de consultoría estratégica.
+1. The tech sector is experiencing 45% growth in demand for strategic consulting services.
 
-2. Las empresas que implementan estrategias de growth basadas en datos están viendo un ROI 3x mayor.
+2. Companies implementing data-driven growth strategies are seeing 3x higher ROI.
 
-3. Existe una ventana de oportunidad para posicionarse antes que la competencia.
+3. There is a window of opportunity to position before the competition.
 
-¿Te gustaría agendar una llamada de 15 minutos para explorar cómo podemos ayudarte a capitalizar estas oportunidades?
+Would you like to schedule a 15-minute call to explore how we can help you capitalize on these opportunities?
 
-Saludos,
-El equipo de Faststrat`,
+Best regards,
+The Faststrat Team`,
 };
 
 export function DraftView() {
@@ -52,18 +52,18 @@ export function DraftView() {
             </div>
             <div>
               <h1 className="font-heading font-semibold text-foreground">{selectedNotification.title}</h1>
-              <p className="text-xs text-muted-foreground">Borrador - Última edición hace 1 hora</p>
+              <p className="text-xs text-muted-foreground">Draft - Last edited 1 hour ago</p>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setIsEditing(!isEditing)} className="gap-2">
             <Edit3 className="w-4 h-4" />
-            {isEditing ? 'Vista previa' : 'Editar'}
+            {isEditing ? 'Preview' : 'Edit'}
           </Button>
           <Button className="btn-primary-gradient gap-2">
             <Send className="w-4 h-4" />
-            Enviar
+            Send
           </Button>
         </div>
       </header>
@@ -71,7 +71,6 @@ export function DraftView() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-3xl mx-auto space-y-6">
-          {/* Warning Banner */}
           {selectedNotification.status === 'critical' && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -80,26 +79,24 @@ export function DraftView() {
             >
               <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-medium text-foreground">Revisión requerida</h4>
+                <h4 className="font-medium text-foreground">Review required</h4>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Este borrador necesita ser revisado antes de enviarse. Verifica el contenido y los CTAs.
+                  This draft needs to be reviewed before sending. Please verify the content and CTAs.
                 </p>
               </div>
             </motion.div>
           )}
 
-          {/* Email Preview */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="bg-card border border-border rounded-xl overflow-hidden shadow-sm"
           >
-            {/* Email Header */}
             <div className="p-4 border-b border-border bg-secondary/30">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-muted-foreground w-16">Asunto:</span>
+                  <span className="text-xs font-medium text-muted-foreground w-16">Subject:</span>
                   <span className="text-sm text-foreground font-medium">{emailDraft.subject}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -109,7 +106,6 @@ export function DraftView() {
               </div>
             </div>
 
-            {/* Email Body */}
             <div className="p-6">
               {isEditing ? (
                 <Textarea
@@ -129,7 +125,6 @@ export function DraftView() {
             </div>
           </motion.div>
 
-          {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -137,9 +132,9 @@ export function DraftView() {
             className="grid grid-cols-3 gap-4"
           >
             {[
-              { label: 'Palabras', value: content.split(' ').length },
-              { label: 'Caracteres', value: content.length },
-              { label: 'Tiempo lectura', value: '~2 min' },
+              { label: 'Words', value: content.split(' ').length },
+              { label: 'Characters', value: content.length },
+              { label: 'Read time', value: '~2 min' },
             ].map((stat, idx) => (
               <div key={idx} className="bg-card border border-border rounded-lg p-4 text-center">
                 <p className="text-2xl font-heading font-bold text-foreground">{stat.value}</p>

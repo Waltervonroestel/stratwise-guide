@@ -17,11 +17,11 @@ import { NotificationsDropdown } from './NotificationsDropdown';
 
 const sidebarItems = [
   { icon: MessageSquare, label: 'Chat', view: 'chat' as const },
-  { icon: Target, label: 'Estrategias', view: 'chat' as const },
-  { icon: BarChart3, label: 'Reportes', view: 'report' as const },
+  { icon: Target, label: 'Strategies', view: 'chat' as const },
+  { icon: BarChart3, label: 'Reports', view: 'report' as const },
   { icon: FileText, label: 'Drafts', view: 'draft' as const },
   { icon: AtSign, label: 'Mentions', view: 'chat' as const },
-  { icon: Briefcase, label: 'Proyectos', view: 'chat' as const },
+  { icon: Briefcase, label: 'Projects', view: 'chat' as const },
 ];
 
 export function IconSidebar() {
@@ -47,7 +47,7 @@ export function IconSidebar() {
         <ChevronLeft className="w-5 h-5" />
       </Button>
 
-      {/* Notifications - Larger bell - Moved to top */}
+      {/* Notifications */}
       <div className="relative mb-4">
         <motion.button
           whileHover={{ scale: 1.08 }}
@@ -87,7 +87,6 @@ export function IconSidebar() {
 
       {/* Bottom Items */}
       <div className="flex flex-col items-center gap-3 mt-auto">
-        {/* Settings */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
