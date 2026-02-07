@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore, getAvailableFlows } from '@/store/appStore';
 import { CompanySelection } from '@/components/phases/CompanySelection';
 import { StageSelection } from '@/components/phases/StageSelection';
+import { EmployeeCountSelection } from '@/components/phases/EmployeeCountSelection';
 import { FlowSelection } from '@/components/phases/FlowSelection';
 import { PlanSelection } from '@/components/phases/PlanSelection';
 import { DocumentUpload } from '@/components/phases/DocumentUpload';
@@ -32,7 +33,7 @@ const Index = () => {
         )}
         {phase === 2 && (
           <motion.div key="phase2" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.3 }}>
-            <StageSelection />
+            {companyType === 'enterprise' ? <EmployeeCountSelection /> : <StageSelection />}
           </motion.div>
         )}
         {phase === 3 && shouldShowFlowSelection() && (

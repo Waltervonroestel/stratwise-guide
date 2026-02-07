@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type CompanyType = 'startup' | 'smb' | 'enterprise' | null;
+export type EnterpriseSize = '0-50' | '50-100' | '100-500' | null;
 export type CompanyStage = 
   | 'preseed-construccion' | 'pequena-traccion' | 'semilla' // Startup stages
   | 'smb-preseed' | 'smb-traccion' | 'smb-2-5' // SMB stages
@@ -70,6 +71,7 @@ export function getDefaultFlow(companyType: CompanyType, stage: CompanyStage): F
 interface AppState {
   phase: Phase;
   companyType: CompanyType;
+  enterpriseSize: EnterpriseSize;
   companyStage: CompanyStage;
   flowType: FlowType;
   planType: PlanType;
@@ -84,6 +86,7 @@ interface AppState {
   
   setPhase: (phase: Phase) => void;
   setCompanyType: (type: CompanyType) => void;
+  setEnterpriseSize: (size: EnterpriseSize) => void;
   setCompanyStage: (stage: CompanyStage) => void;
   setFlowType: (flow: FlowType) => void;
   setPlanType: (plan: PlanType) => void;
@@ -156,6 +159,7 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       phase: 1,
       companyType: null,
+      enterpriseSize: null,
       companyStage: null,
       flowType: null,
       planType: null,
@@ -171,12 +175,16 @@ export const useAppStore = create<AppState>()(
       setPhase: (phase) => set({ phase }),
       
       setCompanyType: (companyType) => {
-        // Enterprise skips stage selection, goes directly to flow selection
+        // All company types go to phase 2 (stage for startup/smb, employee count for enterprise)
         if (companyType === 'enterprise') {
-          set({ companyType, companyStage: 'enterprise-stage', phase: 3 });
+          set({ companyType, companyStage: 'enterprise-stage', phase: 2 });
         } else {
           set({ companyType, phase: 2 });
         }
+      },
+      
+      setEnterpriseSize: (enterpriseSize) => {
+        set({ enterpriseSize, phase: 3 });
       },
       
       setCompanyStage: (companyStage) => {
@@ -207,10 +215,10 @@ export const useAppStore = create<AppState>()(
         if (activeView !== 'chat') {
           set({ activeView: 'chat', selectedNotification: null });
         } else if (phase === 2) {
-          set({ phase: 1, companyType: null, companyStage: null });
+          set({ phase: 1, companyType: null, companyStage: null, enterpriseSize: null });
         } else if (phase === 3) {
           if (companyType === 'enterprise') {
-            set({ phase: 1, companyType: null, companyStage: null, flowType: null });
+            set({ phase: 2, flowType: null });
           } else {
             set({ phase: 2, companyStage: null, flowType: null });
           }
@@ -218,7 +226,7 @@ export const useAppStore = create<AppState>()(
           const availableFlows = getAvailableFlows(companyType, companyStage);
           if (availableFlows.length === 1) {
             if (companyType === 'enterprise') {
-              set({ phase: 1, companyType: null, companyStage: null, flowType: null, planType: null });
+              set({ phase: 2, flowType: null, planType: null });
             } else {
               set({ phase: 2, companyStage: null, flowType: null, planType: null });
             }
@@ -249,6 +257,7 @@ export const useAppStore = create<AppState>()(
       resetFlow: () => set({
         phase: 1,
         companyType: null,
+        enterpriseSize: null,
         companyStage: null,
         flowType: null,
         planType: null,
@@ -264,6 +273,7 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({
         phase: state.phase,
         companyType: state.companyType,
+        enterpriseSize: state.enterpriseSize,
         companyStage: state.companyStage,
         flowType: state.flowType,
         planType: state.planType,
