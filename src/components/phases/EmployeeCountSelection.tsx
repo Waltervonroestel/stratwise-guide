@@ -7,17 +7,17 @@ const sizeOptions: { size: EnterpriseSize; title: string; description: string }[
   {
     size: '0-50',
     title: '0 to 50 employees',
-    description: 'Small company or in early growth',
+    description: 'Lean enterprise team focused on agility',
   },
   {
     size: '50-100',
     title: '50 to 100 employees',
-    description: 'Mid-size company with established structure',
+    description: 'Expanding business optimizing strategy',
   },
   {
     size: '100-500',
     title: '100 to 500 employees',
-    description: 'Large company with complex operations',
+    description: 'Large organization with complex operations',
   },
 ];
 
