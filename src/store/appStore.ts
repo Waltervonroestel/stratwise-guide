@@ -148,7 +148,7 @@ const mockNotifications: Notification[] = [
     id: '4',
     type: 'processing',
     title: 'Analizando respuestas...',
-    description: 'Generando estrategia personalizada basada en las respuestas del cuestionario BrandOS.',
+    description: 'Generando estrategia personalizada basada en las respuestas de la conversación BrandOS.',
     status: 'processing',
     timestamp: new Date(),
   },
