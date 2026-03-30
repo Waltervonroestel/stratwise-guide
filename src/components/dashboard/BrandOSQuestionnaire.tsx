@@ -364,6 +364,7 @@ export function BrandOSQuestionnaire() {
               )}
             </AnimatePresence>
           </ScrollArea>
+          )}
         </div>
 
         {/* Footer */}
