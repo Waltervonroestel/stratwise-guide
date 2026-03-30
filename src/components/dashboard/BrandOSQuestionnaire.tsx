@@ -104,6 +104,8 @@ export function BrandOSQuestionnaire() {
   // Upgrade flow handlers
   const handleStartOver = () => {
     setShowUpgradeDialog(false);
+    setFinalSubmitted(false);
+    setIsCollapsed(false);
     resetQuestionnaire();
     setShowFinalSummary(false);
     toast.info('Starting fresh! Take your time with detailed responses.');
@@ -111,6 +113,8 @@ export function BrandOSQuestionnaire() {
 
   const handleEditResponses = () => {
     setShowUpgradeDialog(false);
+    setFinalSubmitted(false);
+    setIsCollapsed(false);
     // Unlock all packets for editing
     for (let i = 0; i < 7; i++) {
       editPacket(i);
@@ -122,14 +126,14 @@ export function BrandOSQuestionnaire() {
 
   const handleKeepResponses = () => {
     setShowUpgradeDialog(false);
+    setFinalSubmitted(false);
+    setIsCollapsed(false);
     setShowSubmitWarning(true);
   };
 
   const handleUpgradePlan = (newPlan: 'enterprise' | 'premium') => {
     setShowUpgradePicker(false);
-    // Reset submitted state so UI shows the questionnaire again
-    setFinalSubmitted(false);
-    setIsCollapsed(false);
+    // Show upgrade dialog first (stay in collapsed state until user picks an option)
     handlePlanUpgrade('entry', newPlan);
     // Update plan without changing phase (stay on dashboard)
     useAppStore.setState({ planType: newPlan });
