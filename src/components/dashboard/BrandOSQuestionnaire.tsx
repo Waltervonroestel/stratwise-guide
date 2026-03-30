@@ -200,9 +200,37 @@ export function BrandOSQuestionnaire() {
             <span className="font-medium text-sm">{currentFlowInfo.label}</span>
             <span className="text-xs opacity-75">• {currentFlowInfo.description}</span>
             {planType && (
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-auto">
-                {planType === 'entry' ? 'Free Trial' : planType === 'enterprise' ? 'Foundation' : 'Growth Suite'}
-              </span>
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-xs bg-white/20 px-2 py-0.5 rounded">
+                  {planType === 'entry' ? 'Free Trial' : planType === 'enterprise' ? 'Foundation' : 'Growth Suite'}
+                </span>
+                {planType === 'entry' && (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUpgradePicker(!showUpgradePicker)}
+                      className="text-xs bg-white/30 hover:bg-white/40 px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+                    >
+                      <ArrowUp className="w-3 h-3" /> Upgrade
+                    </button>
+                    {showUpgradePicker && (
+                      <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg p-2 z-50 min-w-[160px]">
+                        <button
+                          onClick={() => handleUpgradePlan('enterprise')}
+                          className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors"
+                        >
+                          Foundation — $499
+                        </button>
+                        <button
+                          onClick={() => handleUpgradePlan('premium')}
+                          className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors"
+                        >
+                          Growth Suite — $999
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
