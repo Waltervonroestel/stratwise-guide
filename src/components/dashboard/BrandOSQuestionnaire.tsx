@@ -127,6 +127,9 @@ export function BrandOSQuestionnaire() {
 
   const handleUpgradePlan = (newPlan: 'enterprise' | 'premium') => {
     setShowUpgradePicker(false);
+    // Reset submitted state so UI shows the questionnaire again
+    setFinalSubmitted(false);
+    setIsCollapsed(false);
     handlePlanUpgrade('entry', newPlan);
     // Update plan without changing phase (stay on dashboard)
     useAppStore.setState({ planType: newPlan });
