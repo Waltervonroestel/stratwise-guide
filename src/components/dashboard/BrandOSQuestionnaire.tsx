@@ -477,7 +477,7 @@ export function BrandOSQuestionnaire() {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          {showFinalSummary && (planType === 'entry' || (!!upgradedToPlan && previousPlanType === 'entry')) ? (
+          {showFinalSummary ? (
             <div className="flex w-full items-center justify-center gap-2 text-center text-sm text-muted-foreground">
               <ArrowUp className="h-4 w-4 text-primary" /> Choose an option above to continue
             </div>
