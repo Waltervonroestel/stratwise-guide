@@ -32,6 +32,8 @@ export function BrandOSQuestionnaire() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
+  const [showFinalSummary, setShowFinalSummary] = useState(false);
+  const [previousPlan] = useState<'entry' | null>(planType === 'entry' ? 'entry' : null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentFlowInfo = flowType ? flowLabels[flowType] || flowLabels.completo : flowLabels.completo;
