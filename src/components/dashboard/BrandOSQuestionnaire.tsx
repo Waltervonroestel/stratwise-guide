@@ -375,7 +375,17 @@ export function BrandOSQuestionnaire() {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          {currentStatus === 'review' ? (
+          {showFinalSummary ? (
+            <>
+              <Button variant="ghost" onClick={() => setShowFinalSummary(false)} className="gap-2">
+                <ChevronLeft className="w-4 h-4" /> Back to Packets
+              </Button>
+              <Button onClick={handleFinalSubmit} className="btn-primary-gradient gap-2">
+                <Send className="w-4 h-4" />
+                I have finished editing and I am happy with my responses
+              </Button>
+            </>
+          ) : currentStatus === 'review' ? (
             <>
               <Button variant="ghost" onClick={() => editPacket(currentPacket)} className="gap-2">
                 <ChevronLeft className="w-4 h-4" /> Edit Answers
@@ -389,9 +399,8 @@ export function BrandOSQuestionnaire() {
               <div className="text-sm text-muted-foreground flex items-center gap-2">
                 <Check className="w-4 h-4 text-green-500" /> All 7 packets confirmed
               </div>
-              <Button onClick={handleFinalSubmit} className="btn-primary-gradient gap-2">
-                <Send className="w-4 h-4" />
-                I have finished editing and I am happy with my responses
+              <Button onClick={() => setShowFinalSummary(true)} className="btn-primary-gradient gap-2">
+                <Package className="w-4 h-4" /> View Final Summary
               </Button>
             </>
           ) : (
