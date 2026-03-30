@@ -104,14 +104,19 @@ export function BrandOSQuestionnaire() {
   const handleStartOver = () => {
     setShowUpgradeDialog(false);
     resetQuestionnaire();
+    setShowFinalSummary(false);
     toast.info('Starting fresh! Take your time with detailed responses.');
   };
 
   const handleEditResponses = () => {
     setShowUpgradeDialog(false);
-    // Open first packet for editing
-    editPacket(0);
-    toast.info('Review and edit your previous responses.');
+    // Unlock all packets for editing
+    for (let i = 0; i < 7; i++) {
+      editPacket(i);
+    }
+    editPacket(0); // Go to first packet
+    setShowFinalSummary(true); // Show full summary so they can see all answers
+    toast.info('Review and edit your previous responses. Click "Edit" on any packet.');
   };
 
   const handleKeepResponses = () => {
