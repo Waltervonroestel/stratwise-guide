@@ -129,8 +129,8 @@ export function SubmitWarningDialog({ isOpen, onClose, onConfirmSubmit }: Submit
           </p>
           <div className="bg-background/80 rounded-lg p-3 space-y-1">
             <p className="text-sm font-semibold text-foreground">Re-editing costs:</p>
-            <p className="text-sm text-foreground">• <strong>$2.00</strong> per question edit</p>
-            <p className="text-sm text-foreground">• <strong>$50.00</strong> per full resubmission of all packets</p>
+            <p className="text-sm text-foreground">• <strong>$2.00</strong> per question</p>
+            <p className="text-sm text-foreground">• <strong>$50.00</strong> per resubmission of all packets to ensure accuracy</p>
           </div>
         </div>
 
