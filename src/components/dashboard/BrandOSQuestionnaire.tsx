@@ -125,6 +125,12 @@ export function BrandOSQuestionnaire() {
     setShowSubmitWarning(true);
   };
 
+  const handleUpgradePlan = (newPlan: 'enterprise' | 'premium') => {
+    setShowUpgradePicker(false);
+    handlePlanUpgrade('entry', newPlan);
+    setPlanType(newPlan);
+  };
+
   // Collapsed/completed state
   if (finalSubmitted && isCollapsed) {
     return (
