@@ -133,10 +133,12 @@ export function BrandOSQuestionnaire() {
 
   const handleUpgradePlan = (newPlan: 'enterprise' | 'premium') => {
     setShowUpgradePicker(false);
-    // Show upgrade dialog first (stay in collapsed state until user picks an option)
     handlePlanUpgrade('entry', newPlan);
-    // Update plan without changing phase (stay on dashboard)
+    setShowUpgradeDialog(false);
     useAppStore.setState({ planType: newPlan });
+    setFinalSubmitted(false);
+    setIsCollapsed(false);
+    setShowFinalSummary(true);
   };
 
   // Collapsed/completed state

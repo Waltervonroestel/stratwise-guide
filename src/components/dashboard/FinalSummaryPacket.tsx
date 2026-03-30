@@ -50,7 +50,7 @@ export function FinalSummaryPacket({
                 Upgraded from Free Trial to {upgradedPlanName}
               </h3>
               <p className="text-sm opacity-90">
-                You now have access to the full suite of features. How would you like to proceed?
+                Do you want to choose what happens with the responses from your free trial?
               </p>
             </div>
           </div>
@@ -64,8 +64,8 @@ export function FinalSummaryPacket({
                 <RefreshCw className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm">A) Start Over</h4>
-                <p className="text-xs opacity-80">Begin fresh with detailed, comprehensive responses.</p>
+                <h4 className="font-semibold text-sm">A) Start over</h4>
+                <p className="text-xs opacity-80">Chat starts over from the beginning.</p>
               </div>
             </button>
 
@@ -77,8 +77,8 @@ export function FinalSummaryPacket({
                 <Edit3 className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm">B) Edit My Responses</h4>
-                <p className="text-xs opacity-80">Review and refine the answers from your trial below.</p>
+                <h4 className="font-semibold text-sm">B) Edit the responses you used in your trial</h4>
+                <p className="text-xs opacity-80">They will see all the answers from their original Q&amp;A and can edit them.</p>
               </div>
             </button>
 
@@ -90,8 +90,8 @@ export function FinalSummaryPacket({
                 <CheckCircle className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="font-semibold text-sm">C) I'm Happy — Generate Reports</h4>
-                <p className="text-xs opacity-80">Keep current answers and proceed to report generation.</p>
+                <h4 className="font-semibold text-sm">C) I am happy with my response please generate my reports</h4>
+                <p className="text-xs opacity-80">This will open the warning box before final submission.</p>
               </div>
             </button>
           </div>
