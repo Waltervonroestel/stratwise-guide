@@ -10,6 +10,8 @@ interface FinalSummaryPacketProps {
   data: ExtendedQuestionnaireData;
   planType: PlanType;
   previousPlan?: 'entry' | null;
+  showUpgradeChoices: boolean;
+  upgradedToPlan?: string | null;
   onStartOver: () => void;
   onEditResponses: () => void;
   onKeepResponses: () => void;
@@ -20,13 +22,14 @@ export function FinalSummaryPacket({
   data,
   planType,
   previousPlan,
+  showUpgradeChoices,
+  upgradedToPlan,
   onStartOver,
   onEditResponses,
   onKeepResponses,
   onEditPacket,
 }: FinalSummaryPacketProps) {
-  const isUpgraded = previousPlan === 'entry' && planType !== 'entry';
-  const upgradedPlanName = planType === 'enterprise' ? 'Foundation' : 'Growth Suite';
+  const upgradedPlanName = upgradedToPlan === 'enterprise' ? 'Foundation' : 'Growth Suite';
 
   return (
     <motion.div
@@ -99,7 +102,7 @@ export function FinalSummaryPacket({
         </div>
       </ScrollArea>
 
-      {isUpgraded && (
+      {showUpgradeChoices && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -162,7 +165,7 @@ export function FinalSummaryPacket({
         </motion.div>
       )}
 
-      {!isUpgraded && (
+      {!showUpgradeChoices && (
         <div className="bg-warning/10 border border-warning/30 rounded-xl p-4">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />

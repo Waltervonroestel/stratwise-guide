@@ -134,7 +134,7 @@ export function BrandOSQuestionnaire() {
   const handleUpgradePlan = (newPlan: 'enterprise' | 'premium') => {
     setShowUpgradePicker(false);
     handlePlanUpgrade('entry', newPlan);
-    setShowUpgradeDialog(false);
+    setShowUpgradeDialog(false); // Disable old modal — choices are inline now
     useAppStore.setState({ planType: newPlan });
     setFinalSubmitted(false);
     setIsCollapsed(false);
@@ -412,6 +412,8 @@ export function BrandOSQuestionnaire() {
               data={data}
               planType={planType}
               previousPlan={previousPlanType as 'entry' | null}
+              showUpgradeChoices={!!upgradedToPlan && previousPlanType === 'entry'}
+              upgradedToPlan={upgradedToPlan}
               onStartOver={handleStartOver}
               onEditResponses={handleEditResponses}
               onKeepResponses={handleKeepResponses}
