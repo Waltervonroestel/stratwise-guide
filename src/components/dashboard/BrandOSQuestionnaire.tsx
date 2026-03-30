@@ -128,6 +128,12 @@ export function BrandOSQuestionnaire() {
     setShowUpgradeDialog(false);
     setFinalSubmitted(false);
     setIsCollapsed(false);
+
+    if (planType === 'entry') {
+      handleFinalSubmit();
+      return;
+    }
+
     setShowSubmitWarning(true);
   };
 
