@@ -412,6 +412,8 @@ export function BrandOSQuestionnaire() {
               data={data}
               planType={planType}
               previousPlan={previousPlanType as 'entry' | null}
+              showUpgradeChoices={!!upgradedToPlan && previousPlanType === 'entry'}
+              upgradedToPlan={upgradedToPlan}
               onStartOver={handleStartOver}
               onEditResponses={handleEditResponses}
               onKeepResponses={handleKeepResponses}
