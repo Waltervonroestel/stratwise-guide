@@ -72,6 +72,12 @@ export function BrandOSQuestionnaire() {
   const handleConfirmPacket = () => {
     confirmPacket(currentPacket);
     toast.success(`Packet ${currentPacket + 1} confirmed ✓`);
+    // If this was the last packet, auto-show final summary
+    const updatedStatuses = [...packetStatuses];
+    updatedStatuses[currentPacket] = 'confirmed';
+    if (updatedStatuses.every(s => s === 'confirmed')) {
+      setShowFinalSummary(true);
+    }
   };
 
   const handleFinalSubmit = () => {
