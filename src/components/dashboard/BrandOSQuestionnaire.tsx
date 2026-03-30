@@ -152,7 +152,9 @@ export function BrandOSQuestionnaire() {
             <div>
               <h3 className="font-heading font-semibold text-lg">BrandOS Conversation</h3>
               <p className="text-sm opacity-90">
-                Packet {currentPacket + 1} of 7 • {confirmedCount}/7 confirmed
+                {showFinalSummary
+                  ? 'Final Review • All 7 packets'
+                  : `Packet ${currentPacket + 1} of 7 • ${confirmedCount}/7 confirmed`}
               </p>
             </div>
             <div className="flex gap-2">
