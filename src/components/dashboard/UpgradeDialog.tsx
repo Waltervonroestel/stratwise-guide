@@ -5,12 +5,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 
 interface UpgradeDialogProps {
   isOpen: boolean;
-  onClose: () => void;
   onStartOver: () => void;
   onEditResponses: () => void;
   onKeepResponses: () => void;
@@ -19,89 +17,89 @@ interface UpgradeDialogProps {
 
 export function UpgradeDialog({
   isOpen,
-  onClose,
   onStartOver,
   onEditResponses,
   onKeepResponses,
   upgradedToPlan,
 }: UpgradeDialogProps) {
+  if (!isOpen) return null;
+
   const planName = upgradedToPlan === 'enterprise' ? 'Foundation' : upgradedToPlan === 'premium' ? 'Growth Suite' : 'your new plan';
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg">
-        {/* Upgrade Banner */}
-        <div className="bg-gradient-to-r from-primary to-primary-hover rounded-xl p-4 -mx-2 -mt-2 mb-4 text-primary-foreground">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <ArrowUp className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-heading font-bold text-lg">
-                Upgraded from Free Trial to {planName}! 🎉
-              </h3>
-              <p className="text-sm opacity-90">
-                You now have access to the full suite of features.
-              </p>
-            </div>
+    <div className="mb-4 overflow-hidden rounded-2xl border border-primary/20 bg-card shadow-sm">
+      <div className="bg-gradient-to-r from-primary to-primary-hover p-4 text-primary-foreground">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
+            <ArrowUp className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-heading text-lg font-bold">
+              Upgraded from Free Trial to {planName}! 🎉
+            </h3>
+            <p className="text-sm opacity-90">
+              You now have access to the full suite of features.
+            </p>
           </div>
         </div>
+      </div>
 
-        <DialogHeader>
-          <DialogTitle className="font-heading text-lg">How would you like to proceed?</DialogTitle>
-          <DialogDescription>
-            You completed your trial questionnaire. Choose how to handle your existing responses for your upgraded plan.
-          </DialogDescription>
-        </DialogHeader>
+      <div className="space-y-4 p-5">
+        <div>
+          <h3 className="font-heading text-lg font-semibold text-foreground">Do you want to:</h3>
+          <p className="text-sm text-muted-foreground">
+            Choose how you want to continue with the responses you used in your free trial.
+          </p>
+        </div>
 
-        <div className="space-y-3 mt-2">
+        <div className="space-y-3">
           <button
             onClick={onStartOver}
-            className="w-full flex items-start gap-3 p-4 rounded-xl border border-border hover:border-primary/40 hover:bg-accent/30 transition-all text-left"
+            className="flex w-full items-start gap-3 rounded-xl border border-border bg-background p-4 text-left transition-all hover:border-primary/40 hover:bg-accent/30"
           >
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <RefreshCw className="w-5 h-5 text-primary" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <RefreshCw className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h4 className="font-heading font-semibold text-sm text-foreground">A) Start Over</h4>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Begin the questionnaire from scratch with fresh, detailed responses. The chat starts over from the beginning.
+              <h4 className="font-heading text-sm font-semibold text-foreground">A) Start over</h4>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Chat starts over from the beginning.
               </p>
             </div>
           </button>
 
           <button
             onClick={onEditResponses}
-            className="w-full flex items-start gap-3 p-4 rounded-xl border border-border hover:border-primary/40 hover:bg-accent/30 transition-all text-left"
+            className="flex w-full items-start gap-3 rounded-xl border border-border bg-background p-4 text-left transition-all hover:border-primary/40 hover:bg-accent/30"
           >
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Edit3 className="w-5 h-5 text-primary" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <Edit3 className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h4 className="font-heading font-semibold text-sm text-foreground">B) Edit My Responses</h4>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                See all the answers from your original trial Q&A and edit them before generating reports.
+              <h4 className="font-heading text-sm font-semibold text-foreground">B) Edit the responses you used in your trial</h4>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                They will see all the answers from their original Q&amp;A and can edit them.
               </p>
             </div>
           </button>
 
           <button
             onClick={onKeepResponses}
-            className="w-full flex items-start gap-3 p-4 rounded-xl border border-border hover:border-primary/40 hover:bg-accent/30 transition-all text-left"
+            className="flex w-full items-start gap-3 rounded-xl border border-border bg-background p-4 text-left transition-all hover:border-primary/40 hover:bg-accent/30"
           >
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <CheckCircle className="w-5 h-5 text-primary" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+              <CheckCircle className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h4 className="font-heading font-semibold text-sm text-foreground">C) I'm Happy — Generate Reports</h4>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Keep your current answers and proceed to report generation.
+              <h4 className="font-heading text-sm font-semibold text-foreground">C) I am happy with my responses, please generate my reports</h4>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Continue with the current answers and then show the warning box before final submit.
               </p>
             </div>
           </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
 

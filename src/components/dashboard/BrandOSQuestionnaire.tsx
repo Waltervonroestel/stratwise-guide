@@ -192,7 +192,6 @@ export function BrandOSQuestionnaire() {
 
         <UpgradeDialog
           isOpen={showUpgradeDialog}
-          onClose={() => setShowUpgradeDialog(false)}
           onStartOver={handleStartOver}
           onEditResponses={handleEditResponses}
           onKeepResponses={handleKeepResponses}
@@ -537,7 +536,6 @@ export function BrandOSQuestionnaire() {
 
       <UpgradeDialog
         isOpen={showUpgradeDialog}
-        onClose={() => setShowUpgradeDialog(false)}
         onStartOver={handleStartOver}
         onEditResponses={handleEditResponses}
         onKeepResponses={handleKeepResponses}
