@@ -471,7 +471,11 @@ export function BrandOSQuestionnaire() {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          {showFinalSummary ? (
+          {showFinalSummary && (!!upgradedToPlan && previousPlanType === 'entry') ? (
+            <div className="w-full text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+              <ArrowUp className="w-4 h-4 text-primary" /> Choose an option above to continue
+            </div>
+          ) : showFinalSummary ? (
             <>
               <Button variant="ghost" onClick={() => setShowFinalSummary(false)} className="gap-2">
                 <ChevronLeft className="w-4 h-4" /> Back to Packets
