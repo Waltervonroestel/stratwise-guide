@@ -33,6 +33,7 @@ export function BrandOSQuestionnaire() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
   const [showFinalSummary, setShowFinalSummary] = useState(false);
+  const [showUpgradePicker, setShowUpgradePicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentFlowInfo = flowType ? flowLabels[flowType] || flowLabels.completo : flowLabels.completo;
