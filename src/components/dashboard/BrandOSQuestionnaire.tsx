@@ -452,6 +452,7 @@ export function BrandOSQuestionnaire() {
         onStartOver={handleStartOver}
         onEditResponses={handleEditResponses}
         onKeepResponses={handleKeepResponses}
+        upgradedToPlan={upgradedToPlan}
       />
 
       <SubmitWarningDialog
