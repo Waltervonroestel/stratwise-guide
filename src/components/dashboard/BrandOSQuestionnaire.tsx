@@ -22,10 +22,10 @@ export function BrandOSQuestionnaire() {
   const { hasDocumentAddon, flowType, planType, questionnaireCompleted, completeQuestionnaire } = useAppStore();
   const {
     data, currentPacket, packetStatuses, allPacketsConfirmed, finalSubmitted,
-    showUpgradeDialog, showSubmitWarning,
+    showUpgradeDialog, showSubmitWarning, previousPlanType, upgradedToPlan,
     updateData, setCurrentPacket, confirmPacket, editPacket,
     setPacketStatus, setShowUpgradeDialog, setShowSubmitWarning,
-    setFinalSubmitted, resetQuestionnaire,
+    setFinalSubmitted, resetQuestionnaire, handlePlanUpgrade,
   } = useQuestionnaireStore();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -33,7 +33,6 @@ export function BrandOSQuestionnaire() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
   const [showFinalSummary, setShowFinalSummary] = useState(false);
-  const [previousPlan] = useState<'entry' | null>(planType === 'entry' ? 'entry' : null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentFlowInfo = flowType ? flowLabels[flowType] || flowLabels.completo : flowLabels.completo;
