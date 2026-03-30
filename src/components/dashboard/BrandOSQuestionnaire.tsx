@@ -19,7 +19,7 @@ const flowLabels: Record<string, { label: string; description: string }> = {
 };
 
 export function BrandOSQuestionnaire() {
-  const { hasDocumentAddon, flowType, planType, questionnaireCompleted, completeQuestionnaire } = useAppStore();
+  const { hasDocumentAddon, flowType, planType, questionnaireCompleted, completeQuestionnaire, setPlanType } = useAppStore();
   const {
     data, currentPacket, packetStatuses, allPacketsConfirmed, finalSubmitted,
     showUpgradeDialog, showSubmitWarning, previousPlanType, upgradedToPlan,
