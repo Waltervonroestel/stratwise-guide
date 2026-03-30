@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Check, FileUp, File, X, FileText, Package, Send, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
