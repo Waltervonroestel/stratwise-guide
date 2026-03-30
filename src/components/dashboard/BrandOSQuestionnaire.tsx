@@ -128,7 +128,8 @@ export function BrandOSQuestionnaire() {
   const handleUpgradePlan = (newPlan: 'enterprise' | 'premium') => {
     setShowUpgradePicker(false);
     handlePlanUpgrade('entry', newPlan);
-    setPlanType(newPlan);
+    // Update plan without changing phase (stay on dashboard)
+    useAppStore.setState({ planType: newPlan });
   };
 
   // Collapsed/completed state
