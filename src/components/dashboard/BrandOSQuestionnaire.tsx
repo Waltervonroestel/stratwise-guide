@@ -316,7 +316,7 @@ export function BrandOSQuestionnaire() {
             <FinalSummaryPacket
               data={data}
               planType={planType}
-              previousPlan={previousPlan}
+              previousPlan={previousPlanType as 'entry' | null}
               onStartOver={handleStartOver}
               onEditResponses={handleEditResponses}
               onKeepResponses={handleKeepResponses}
