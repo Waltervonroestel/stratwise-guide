@@ -165,7 +165,7 @@ export function FinalSummaryPacket({
         </motion.div>
       )}
 
-      {!isUpgraded && (
+      {!showUpgradeChoices && (
         <div className="bg-warning/10 border border-warning/30 rounded-xl p-4">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
