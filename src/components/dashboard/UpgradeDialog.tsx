@@ -1,4 +1,4 @@
-import { AlertTriangle, RefreshCw, Edit3, CheckCircle } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Edit3, CheckCircle, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -14,6 +14,7 @@ interface UpgradeDialogProps {
   onStartOver: () => void;
   onEditResponses: () => void;
   onKeepResponses: () => void;
+  upgradedToPlan?: string | null;
 }
 
 export function UpgradeDialog({
@@ -22,14 +23,34 @@ export function UpgradeDialog({
   onStartOver,
   onEditResponses,
   onKeepResponses,
+  upgradedToPlan,
 }: UpgradeDialogProps) {
+  const planName = upgradedToPlan === 'enterprise' ? 'Foundation' : upgradedToPlan === 'premium' ? 'Growth Suite' : 'your new plan';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg">
+        {/* Upgrade Banner */}
+        <div className="bg-gradient-to-r from-primary to-primary-hover rounded-xl p-4 -mx-2 -mt-2 mb-4 text-primary-foreground">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <ArrowUp className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-heading font-bold text-lg">
+                Upgraded from Free Trial to {planName}! 🎉
+              </h3>
+              <p className="text-sm opacity-90">
+                You now have access to the full suite of features.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <DialogHeader>
-          <DialogTitle className="font-heading text-lg">Welcome to your upgraded plan! 🎉</DialogTitle>
+          <DialogTitle className="font-heading text-lg">How would you like to proceed?</DialogTitle>
           <DialogDescription>
-            You completed your trial questionnaire. How would you like to proceed with your upgraded plan?
+            You completed your trial questionnaire. Choose how to handle your existing responses for your upgraded plan.
           </DialogDescription>
         </DialogHeader>
 
@@ -44,7 +65,7 @@ export function UpgradeDialog({
             <div>
               <h4 className="font-heading font-semibold text-sm text-foreground">A) Start Over</h4>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Begin the questionnaire from scratch with fresh, detailed responses.
+                Begin the questionnaire from scratch with fresh, detailed responses. The chat starts over from the beginning.
               </p>
             </div>
           </button>
@@ -59,7 +80,7 @@ export function UpgradeDialog({
             <div>
               <h4 className="font-heading font-semibold text-sm text-foreground">B) Edit My Responses</h4>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Review and refine the answers you provided during your trial.
+                See all the answers from your original trial Q&A and edit them before generating reports.
               </p>
             </div>
           </button>

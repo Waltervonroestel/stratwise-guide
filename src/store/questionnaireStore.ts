@@ -91,6 +91,8 @@ interface QuestionnaireStore {
   isTrialCompleted: boolean;
   showSubmitWarning: boolean;
   finalSubmitted: boolean;
+  previousPlanType: string | null;
+  upgradedToPlan: string | null;
 
   updateData: (partial: Partial<ExtendedQuestionnaireData>) => void;
   setCurrentPacket: (packet: number) => void;
@@ -103,6 +105,7 @@ interface QuestionnaireStore {
   setFinalSubmitted: (submitted: boolean) => void;
   resetQuestionnaire: () => void;
   editPacket: (packetIndex: number) => void;
+  handlePlanUpgrade: (previousPlan: string, newPlan: string) => void;
 }
 
 const initialData: ExtendedQuestionnaireData = {
@@ -145,6 +148,8 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
       isTrialCompleted: false,
       showSubmitWarning: false,
       finalSubmitted: false,
+      previousPlanType: null,
+      upgradedToPlan: null,
 
       updateData: (partial) => set((s) => ({ data: { ...s.data, ...partial } })),
 
@@ -199,6 +204,17 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         finalSubmitted: false,
         showSubmitWarning: false,
       }),
+
+      handlePlanUpgrade: (previousPlan, newPlan) => {
+        if (previousPlan === 'entry' && newPlan !== 'entry') {
+          set({
+            previousPlanType: previousPlan,
+            upgradedToPlan: newPlan,
+            showUpgradeDialog: true,
+            finalSubmitted: false,
+          });
+        }
+      },
     }),
     {
       name: 'faststrat-questionnaire',
@@ -209,6 +225,8 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         allPacketsConfirmed: state.allPacketsConfirmed,
         isTrialCompleted: state.isTrialCompleted,
         finalSubmitted: state.finalSubmitted,
+        previousPlanType: state.previousPlanType,
+        upgradedToPlan: state.upgradedToPlan,
       }),
     }
   )

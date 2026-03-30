@@ -198,7 +198,14 @@ export const useAppStore = create<AppState>()(
       },
       
       setFlowType: (flowType) => set({ flowType, phase: 4 }),
-      setPlanType: (planType) => set({ planType, phase: 5 }),
+      setPlanType: (planType) => {
+        const previousPlan = get().planType;
+        set({ planType, phase: 5 });
+        // Upgrade detection is handled in the questionnaire component
+        if (previousPlan === 'entry' && planType !== 'entry') {
+          // Store previous plan for upgrade flow - will be checked in BrandOSQuestionnaire
+        }
+      },
       advanceToDashboard: () => set({ phase: 6 }),
       setNotificationFilter: (notificationFilter) => set({ notificationFilter }),
       setQuestionnaireStep: (questionnaireStep) => set({ questionnaireStep }),

@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Check, FileUp, File, X, FileText, Package, Send, AlertTriangle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, FileUp, File, X, FileText, Package, Send, AlertTriangle, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore, FlowType } from '@/store/appStore';
 import { useQuestionnaireStore, PACKETS } from '@/store/questionnaireStore';
@@ -19,13 +19,13 @@ const flowLabels: Record<string, { label: string; description: string }> = {
 };
 
 export function BrandOSQuestionnaire() {
-  const { hasDocumentAddon, flowType, planType, questionnaireCompleted, completeQuestionnaire } = useAppStore();
+  const { hasDocumentAddon, flowType, planType, questionnaireCompleted, completeQuestionnaire, setPlanType } = useAppStore();
   const {
     data, currentPacket, packetStatuses, allPacketsConfirmed, finalSubmitted,
-    showUpgradeDialog, showSubmitWarning,
+    showUpgradeDialog, showSubmitWarning, previousPlanType, upgradedToPlan,
     updateData, setCurrentPacket, confirmPacket, editPacket,
     setPacketStatus, setShowUpgradeDialog, setShowSubmitWarning,
-    setFinalSubmitted, resetQuestionnaire,
+    setFinalSubmitted, resetQuestionnaire, handlePlanUpgrade,
   } = useQuestionnaireStore();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -33,7 +33,7 @@ export function BrandOSQuestionnaire() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
   const [showFinalSummary, setShowFinalSummary] = useState(false);
-  const [previousPlan] = useState<'entry' | null>(planType === 'entry' ? 'entry' : null);
+  const [showUpgradePicker, setShowUpgradePicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentFlowInfo = flowType ? flowLabels[flowType] || flowLabels.completo : flowLabels.completo;
@@ -105,19 +105,30 @@ export function BrandOSQuestionnaire() {
   const handleStartOver = () => {
     setShowUpgradeDialog(false);
     resetQuestionnaire();
+    setShowFinalSummary(false);
     toast.info('Starting fresh! Take your time with detailed responses.');
   };
 
   const handleEditResponses = () => {
     setShowUpgradeDialog(false);
-    // Open first packet for editing
-    editPacket(0);
-    toast.info('Review and edit your previous responses.');
+    // Unlock all packets for editing
+    for (let i = 0; i < 7; i++) {
+      editPacket(i);
+    }
+    editPacket(0); // Go to first packet
+    setShowFinalSummary(true); // Show full summary so they can see all answers
+    toast.info('Review and edit your previous responses. Click "Edit" on any packet.');
   };
 
   const handleKeepResponses = () => {
     setShowUpgradeDialog(false);
     setShowSubmitWarning(true);
+  };
+
+  const handleUpgradePlan = (newPlan: 'enterprise' | 'premium') => {
+    setShowUpgradePicker(false);
+    handlePlanUpgrade('entry', newPlan);
+    setPlanType(newPlan);
   };
 
   // Collapsed/completed state
@@ -189,9 +200,37 @@ export function BrandOSQuestionnaire() {
             <span className="font-medium text-sm">{currentFlowInfo.label}</span>
             <span className="text-xs opacity-75">• {currentFlowInfo.description}</span>
             {planType && (
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-auto">
-                {planType === 'entry' ? 'Free Trial' : planType === 'enterprise' ? 'Foundation' : 'Growth Suite'}
-              </span>
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-xs bg-white/20 px-2 py-0.5 rounded">
+                  {planType === 'entry' ? 'Free Trial' : planType === 'enterprise' ? 'Foundation' : 'Growth Suite'}
+                </span>
+                {planType === 'entry' && (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUpgradePicker(!showUpgradePicker)}
+                      className="text-xs bg-white/30 hover:bg-white/40 px-2 py-0.5 rounded flex items-center gap-1 transition-colors"
+                    >
+                      <ArrowUp className="w-3 h-3" /> Upgrade
+                    </button>
+                    {showUpgradePicker && (
+                      <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg p-2 z-50 min-w-[160px]">
+                        <button
+                          onClick={() => handleUpgradePlan('enterprise')}
+                          className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors"
+                        >
+                          Foundation — $499
+                        </button>
+                        <button
+                          onClick={() => handleUpgradePlan('premium')}
+                          className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors"
+                        >
+                          Growth Suite — $999
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
@@ -317,7 +356,7 @@ export function BrandOSQuestionnaire() {
             <FinalSummaryPacket
               data={data}
               planType={planType}
-              previousPlan={previousPlan}
+              previousPlan={previousPlanType as 'entry' | null}
               onStartOver={handleStartOver}
               onEditResponses={handleEditResponses}
               onKeepResponses={handleKeepResponses}
@@ -448,6 +487,7 @@ export function BrandOSQuestionnaire() {
         onStartOver={handleStartOver}
         onEditResponses={handleEditResponses}
         onKeepResponses={handleKeepResponses}
+        upgradedToPlan={upgradedToPlan}
       />
 
       <SubmitWarningDialog
