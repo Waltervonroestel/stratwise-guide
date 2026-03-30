@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Check, FileUp, File, X, FileText, Package, Send, AlertTriangle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, FileUp, File, X, FileText, Package, Send, AlertTriangle, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore, FlowType } from '@/store/appStore';
 import { useQuestionnaireStore, PACKETS } from '@/store/questionnaireStore';
