@@ -204,6 +204,17 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         finalSubmitted: false,
         showSubmitWarning: false,
       }),
+
+      handlePlanUpgrade: (previousPlan, newPlan) => {
+        if (previousPlan === 'entry' && newPlan !== 'entry') {
+          set({
+            previousPlanType: previousPlan,
+            upgradedToPlan: newPlan,
+            showUpgradeDialog: true,
+            finalSubmitted: false,
+          });
+        }
+      },
     }),
     {
       name: 'faststrat-questionnaire',
@@ -214,6 +225,8 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         allPacketsConfirmed: state.allPacketsConfirmed,
         isTrialCompleted: state.isTrialCompleted,
         finalSubmitted: state.finalSubmitted,
+        previousPlanType: state.previousPlanType,
+        upgradedToPlan: state.upgradedToPlan,
       }),
     }
   )
