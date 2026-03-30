@@ -8,6 +8,7 @@ import { DocumentUploadPaywall } from './DocumentUploadPaywall';
 import { PacketConfirmation } from './PacketConfirmation';
 import { PacketForm, PACKET_FIELD_LABELS, getPacketAnswers } from './packets/PacketForm';
 import { UpgradeDialog, SubmitWarningDialog } from './UpgradeDialog';
+import { FinalSummaryPacket } from './FinalSummaryPacket';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -31,6 +32,8 @@ export function BrandOSQuestionnaire() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
+  const [showFinalSummary, setShowFinalSummary] = useState(false);
+  const [previousPlan] = useState<'entry' | null>(planType === 'entry' ? 'entry' : null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentFlowInfo = flowType ? flowLabels[flowType] || flowLabels.completo : flowLabels.completo;
@@ -69,6 +72,12 @@ export function BrandOSQuestionnaire() {
   const handleConfirmPacket = () => {
     confirmPacket(currentPacket);
     toast.success(`Packet ${currentPacket + 1} confirmed ✓`);
+    // If this was the last packet, auto-show final summary
+    const updatedStatuses = [...packetStatuses];
+    updatedStatuses[currentPacket] = 'confirmed';
+    if (updatedStatuses.every(s => s === 'confirmed')) {
+      setShowFinalSummary(true);
+    }
   };
 
   const handleFinalSubmit = () => {
@@ -149,7 +158,9 @@ export function BrandOSQuestionnaire() {
             <div>
               <h3 className="font-heading font-semibold text-lg">BrandOS Conversation</h3>
               <p className="text-sm opacity-90">
-                Packet {currentPacket + 1} of 7 • {confirmedCount}/7 confirmed
+                {showFinalSummary
+                  ? 'Final Review • All 7 packets'
+                  : `Packet ${currentPacket + 1} of 7 • ${confirmedCount}/7 confirmed`}
               </p>
             </div>
             <div className="flex gap-2">
@@ -253,13 +264,16 @@ export function BrandOSQuestionnaire() {
               <div key={packet.id} className="flex items-center">
                 <button
                   onClick={() => {
-                    if (packetStatuses[idx] !== 'pending') setCurrentPacket(idx);
+                    if (packetStatuses[idx] !== 'pending') {
+                      setCurrentPacket(idx);
+                      setShowFinalSummary(false);
+                    }
                   }}
                   disabled={packetStatuses[idx] === 'pending'}
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     packetStatuses[idx] === 'confirmed'
                       ? 'bg-green-500 text-white'
-                      : idx === currentPacket
+                      : idx === currentPacket && !showFinalSummary
                       ? 'bg-primary text-primary-foreground ring-2 ring-primary/30'
                       : packetStatuses[idx] === 'pending'
                       ? 'bg-muted text-muted-foreground cursor-not-allowed'
@@ -269,19 +283,52 @@ export function BrandOSQuestionnaire() {
                   {packetStatuses[idx] === 'confirmed' ? <Check className="w-3.5 h-3.5" /> : idx + 1}
                 </button>
                 {idx < PACKETS.length - 1 && (
-                  <div className={`w-4 md:w-8 h-0.5 mx-0.5 transition-colors ${
+                  <div className={`w-4 md:w-6 h-0.5 mx-0.5 transition-colors ${
                     packetStatuses[idx] === 'confirmed' ? 'bg-green-500' : 'bg-muted'
                   }`} />
                 )}
               </div>
             ))}
+            {/* Final summary dot */}
+            <div className="flex items-center">
+              <div className={`w-4 md:w-6 h-0.5 mx-0.5 transition-colors ${
+                allPacketsConfirmed ? 'bg-green-500' : 'bg-muted'
+              }`} />
+              <button
+                onClick={() => { if (allPacketsConfirmed) setShowFinalSummary(true); }}
+                disabled={!allPacketsConfirmed}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                  showFinalSummary
+                    ? 'bg-primary text-primary-foreground ring-2 ring-primary/30'
+                    : allPacketsConfirmed
+                    ? 'bg-green-500 text-white cursor-pointer'
+                    : 'bg-muted text-muted-foreground cursor-not-allowed'
+                }`}
+              >
+                ✓
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Form Content */}
         <div className="p-6">
-          <ScrollArea className="max-h-[400px]">
-            <AnimatePresence mode="wait">
+          {showFinalSummary ? (
+            <FinalSummaryPacket
+              data={data}
+              planType={planType}
+              previousPlan={previousPlan}
+              onStartOver={handleStartOver}
+              onEditResponses={handleEditResponses}
+              onKeepResponses={handleKeepResponses}
+              onEditPacket={(idx) => {
+                editPacket(idx);
+                setShowFinalSummary(false);
+              }}
+            />
+          ) : (
+            <ScrollArea className="max-h-[400px]">
+              <AnimatePresence mode="wait">
               {currentStatus === 'review' ? (
                 <motion.div
                   key={`review-${currentPacket}`}
@@ -323,11 +370,22 @@ export function BrandOSQuestionnaire() {
               )}
             </AnimatePresence>
           </ScrollArea>
+          )}
         </div>
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          {currentStatus === 'review' ? (
+          {showFinalSummary ? (
+            <>
+              <Button variant="ghost" onClick={() => setShowFinalSummary(false)} className="gap-2">
+                <ChevronLeft className="w-4 h-4" /> Back to Packets
+              </Button>
+              <Button onClick={handleFinalSubmit} className="btn-primary-gradient gap-2">
+                <Send className="w-4 h-4" />
+                I have finished editing and I am happy with my responses
+              </Button>
+            </>
+          ) : currentStatus === 'review' ? (
             <>
               <Button variant="ghost" onClick={() => editPacket(currentPacket)} className="gap-2">
                 <ChevronLeft className="w-4 h-4" /> Edit Answers
@@ -341,9 +399,8 @@ export function BrandOSQuestionnaire() {
               <div className="text-sm text-muted-foreground flex items-center gap-2">
                 <Check className="w-4 h-4 text-green-500" /> All 7 packets confirmed
               </div>
-              <Button onClick={handleFinalSubmit} className="btn-primary-gradient gap-2">
-                <Send className="w-4 h-4" />
-                I have finished editing and I am happy with my responses
+              <Button onClick={() => setShowFinalSummary(true)} className="btn-primary-gradient gap-2">
+                <Package className="w-4 h-4" /> View Final Summary
               </Button>
             </>
           ) : (
