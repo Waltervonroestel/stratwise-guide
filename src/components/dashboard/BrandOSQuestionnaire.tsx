@@ -138,23 +138,69 @@ export function BrandOSQuestionnaire() {
   // Collapsed/completed state
   if (finalSubmitted && isCollapsed) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-green-50 border border-green-500/30 rounded-xl p-4 max-w-md"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-            <Check className="w-4 h-4 text-white" />
+      <>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-green-50 border border-green-500/30 rounded-xl p-4 max-w-md"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                <Check className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h4 className="font-medium text-foreground text-sm">BrandOS Questionnaire Completed</h4>
+                <p className="text-xs text-muted-foreground">
+                  {data.name || 'Your company'} • All 7 packets confirmed
+                </p>
+              </div>
+            </div>
+            {planType === 'entry' && (
+              <div className="relative">
+                <Button
+                  size="sm"
+                  onClick={() => setShowUpgradePicker(!showUpgradePicker)}
+                  className="btn-primary-gradient gap-1 text-xs"
+                >
+                  <ArrowUp className="w-3 h-3" /> Upgrade Plan
+                </Button>
+                {showUpgradePicker && (
+                  <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg p-2 z-50 min-w-[160px]">
+                    <button
+                      onClick={() => handleUpgradePlan('enterprise')}
+                      className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors"
+                    >
+                      Foundation — $499
+                    </button>
+                    <button
+                      onClick={() => handleUpgradePlan('premium')}
+                      className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors"
+                    >
+                      Growth Suite — $999
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-          <div>
-            <h4 className="font-medium text-foreground text-sm">BrandOS Questionnaire Completed</h4>
-            <p className="text-xs text-muted-foreground">
-              {data.name || 'Your company'} • All 7 packets confirmed
-            </p>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+
+        <UpgradeDialog
+          isOpen={showUpgradeDialog}
+          onClose={() => setShowUpgradeDialog(false)}
+          onStartOver={handleStartOver}
+          onEditResponses={handleEditResponses}
+          onKeepResponses={handleKeepResponses}
+          upgradedToPlan={upgradedToPlan}
+        />
+
+        <SubmitWarningDialog
+          isOpen={showSubmitWarning}
+          onClose={() => setShowSubmitWarning(false)}
+          onConfirmSubmit={handleConfirmFinalSubmit}
+        />
+      </>
     );
   }
 
