@@ -115,12 +115,12 @@ export function BrandOSQuestionnaire() {
     setShowUpgradeDialog(false);
     setFinalSubmitted(false);
     setIsCollapsed(false);
-    // Unlock all packets for editing
+    // Unlock all packets for editing — user stays on summary to see all answers
     for (let i = 0; i < 7; i++) {
       editPacket(i);
     }
-    editPacket(0); // Go to first packet
-    setShowFinalSummary(true); // Show full summary so they can see all answers
+    setCurrentPacket(0);
+    setShowFinalSummary(true);
     toast.info('Review and edit your previous responses. Click "Edit" on any packet.');
   };
 
@@ -128,12 +128,7 @@ export function BrandOSQuestionnaire() {
     setShowUpgradeDialog(false);
     setFinalSubmitted(false);
     setIsCollapsed(false);
-
-    if (planType === 'entry') {
-      handleFinalSubmit();
-      return;
-    }
-
+    // Always show warning before final submit
     setShowSubmitWarning(true);
   };
 
