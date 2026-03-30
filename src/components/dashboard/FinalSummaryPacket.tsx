@@ -10,6 +10,8 @@ interface FinalSummaryPacketProps {
   data: ExtendedQuestionnaireData;
   planType: PlanType;
   previousPlan?: 'entry' | null;
+  showUpgradeChoices: boolean;
+  upgradedToPlan?: string | null;
   onStartOver: () => void;
   onEditResponses: () => void;
   onKeepResponses: () => void;
@@ -20,13 +22,14 @@ export function FinalSummaryPacket({
   data,
   planType,
   previousPlan,
+  showUpgradeChoices,
+  upgradedToPlan,
   onStartOver,
   onEditResponses,
   onKeepResponses,
   onEditPacket,
 }: FinalSummaryPacketProps) {
-  const isUpgraded = previousPlan === 'entry' && planType !== 'entry';
-  const upgradedPlanName = planType === 'enterprise' ? 'Foundation' : 'Growth Suite';
+  const upgradedPlanName = upgradedToPlan === 'enterprise' ? 'Foundation' : 'Growth Suite';
 
   return (
     <motion.div
