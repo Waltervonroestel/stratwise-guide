@@ -128,6 +128,12 @@ export function BrandOSQuestionnaire() {
     setShowUpgradeDialog(false);
     setFinalSubmitted(false);
     setIsCollapsed(false);
+
+    if (planType === 'entry') {
+      handleFinalSubmit();
+      return;
+    }
+
     setShowSubmitWarning(true);
   };
 
@@ -412,7 +418,7 @@ export function BrandOSQuestionnaire() {
               data={data}
               planType={planType}
               previousPlan={previousPlanType as 'entry' | null}
-              showUpgradeChoices={!!upgradedToPlan && previousPlanType === 'entry'}
+              showUpgradeChoices={planType === 'entry' || (!!upgradedToPlan && previousPlanType === 'entry')}
               upgradedToPlan={upgradedToPlan}
               onStartOver={handleStartOver}
               onEditResponses={handleEditResponses}
@@ -471,9 +477,9 @@ export function BrandOSQuestionnaire() {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          {showFinalSummary && (!!upgradedToPlan && previousPlanType === 'entry') ? (
-            <div className="w-full text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-              <ArrowUp className="w-4 h-4 text-primary" /> Choose an option above to continue
+          {showFinalSummary && (planType === 'entry' || (!!upgradedToPlan && previousPlanType === 'entry')) ? (
+            <div className="flex w-full items-center justify-center gap-2 text-center text-sm text-muted-foreground">
+              <ArrowUp className="h-4 w-4 text-primary" /> Choose an option above to continue
             </div>
           ) : showFinalSummary ? (
             <>

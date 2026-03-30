@@ -29,7 +29,17 @@ export function FinalSummaryPacket({
   onKeepResponses,
   onEditPacket,
 }: FinalSummaryPacketProps) {
+  const isTrialUpgrade = previousPlan === 'entry' && !!upgradedToPlan && planType !== 'entry';
   const upgradedPlanName = upgradedToPlan === 'enterprise' ? 'Foundation' : 'Growth Suite';
+  const decisionTitle = isTrialUpgrade
+    ? `Upgraded from Free Trial to ${upgradedPlanName}`
+    : 'Before you continue';
+  const decisionDescription = isTrialUpgrade
+    ? 'Do you want to: A) start over, B) edit the responses you used in your trial, or C) generate your reports?'
+    : 'Do you want to: A) start over, B) edit the responses you used in your trial, or C) I am happy with my response please generate my reports.';
+  const optionCDescription = planType === 'entry'
+    ? 'This will submit your responses and continue your Free Trial flow.'
+    : 'This will open the warning box before final submission.';
 
   return (
     <motion.div
@@ -59,10 +69,10 @@ export function FinalSummaryPacket({
               >
                 <div className="flex items-center justify-between bg-secondary/30 px-4 py-2.5 border-b border-border">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5 text-white" />
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      <Check className="h-3.5 w-3.5" />
                     </div>
-                    <h4 className="font-heading font-semibold text-sm text-foreground">
+                    <h4 className="font-heading text-sm font-semibold text-foreground">
                       Packet {idx + 1}: {packet.title}
                     </h4>
                     <span className="text-xs text-muted-foreground">
@@ -73,25 +83,25 @@ export function FinalSummaryPacket({
                     variant="ghost"
                     size="sm"
                     onClick={() => onEditPacket(idx)}
-                    className="text-xs gap-1 h-7"
+                    className="h-7 gap-1 text-xs"
                   >
-                    <Edit3 className="w-3 h-3" /> Edit
+                    <Edit3 className="h-3 w-3" /> Edit
                   </Button>
                 </div>
 
-                <div className="p-3 space-y-1.5">
+                <div className="space-y-1.5 p-3">
                   {filledAnswers.map(([key, value]) => (
-                    <div key={key} className="bg-background rounded-lg p-2.5 border border-border/50">
+                    <div key={key} className="rounded-lg border border-border/50 bg-background p-2.5">
                       <span className="text-xs font-medium text-muted-foreground">
                         {labels[key] || key}
                       </span>
-                      <p className="text-sm text-foreground mt-0.5 whitespace-pre-wrap line-clamp-3">
+                      <p className="mt-0.5 line-clamp-3 whitespace-pre-wrap text-sm text-foreground">
                         {value}
                       </p>
                     </div>
                   ))}
                   {filledAnswers.length === 0 && (
-                    <p className="text-xs text-muted-foreground italic py-2 text-center">
+                    <p className="py-2 text-center text-xs italic text-muted-foreground">
                       No answers provided for this packet.
                     </p>
                   )}
@@ -109,26 +119,22 @@ export function FinalSummaryPacket({
           className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary to-primary-hover p-5 text-primary-foreground"
         >
           <div className="mb-3 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-              <ArrowUp className="w-5 h-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-foreground/20">
+              <ArrowUp className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-heading text-lg font-bold">
-                Upgraded from Free Trial to {upgradedPlanName}
-              </h3>
-              <p className="text-sm opacity-90">
-                Do you want to: A) start over, B) edit the responses you used in your trial, or C) generate your reports?
-              </p>
+              <h3 className="font-heading text-lg font-bold">{decisionTitle}</h3>
+              <p className="text-sm opacity-90">{decisionDescription}</p>
             </div>
           </div>
 
           <div className="mt-4 space-y-2">
             <button
               onClick={onStartOver}
-              className="w-full flex items-center gap-3 rounded-lg bg-white/10 p-3 text-left transition-all hover:bg-white/20"
+              className="flex w-full items-center gap-3 rounded-lg bg-primary-foreground/10 p-3 text-left transition-all hover:bg-primary-foreground/20"
             >
-              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                <RefreshCw className="w-4 h-4" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-foreground/20">
+                <RefreshCw className="h-4 w-4" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">A) Start over</h4>
@@ -138,10 +144,10 @@ export function FinalSummaryPacket({
 
             <button
               onClick={onEditResponses}
-              className="w-full flex items-center gap-3 rounded-lg bg-white/10 p-3 text-left transition-all hover:bg-white/20"
+              className="flex w-full items-center gap-3 rounded-lg bg-primary-foreground/10 p-3 text-left transition-all hover:bg-primary-foreground/20"
             >
-              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                <Edit3 className="w-4 h-4" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-foreground/20">
+                <Edit3 className="h-4 w-4" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">B) Edit the responses you used in your trial</h4>
@@ -151,14 +157,14 @@ export function FinalSummaryPacket({
 
             <button
               onClick={onKeepResponses}
-              className="w-full flex items-center gap-3 rounded-lg bg-white/10 p-3 text-left transition-all hover:bg-white/20"
+              className="flex w-full items-center gap-3 rounded-lg bg-primary-foreground/10 p-3 text-left transition-all hover:bg-primary-foreground/20"
             >
-              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                <CheckCircle className="w-4 h-4" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-foreground/20">
+                <CheckCircle className="h-4 w-4" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">C) I am happy with my response please generate my reports</h4>
-                <p className="text-xs opacity-80">This will open the warning box before final submission.</p>
+                <p className="text-xs opacity-80">{optionCDescription}</p>
               </div>
             </button>
           </div>
@@ -166,14 +172,14 @@ export function FinalSummaryPacket({
       )}
 
       {!showUpgradeChoices && (
-        <div className="bg-warning/10 border border-warning/30 rounded-xl p-4">
+        <div className="rounded-xl border border-warning/30 bg-warning/10 p-4">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
             <div>
-              <p className="text-sm text-foreground font-medium">
+              <p className="text-sm font-medium text-foreground">
                 ⚠️ Once submitted, re-editing costs apply:
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="mt-1 text-xs text-muted-foreground">
                 <strong>$2.00</strong> per question edit • <strong>$50.00</strong> per full resubmission
               </p>
             </div>
