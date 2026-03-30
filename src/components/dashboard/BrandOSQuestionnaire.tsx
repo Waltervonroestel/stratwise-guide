@@ -1,90 +1,40 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Check, Building, Users, DollarSign, Target, FileUp, File, X, FileText, Wrench, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, FileUp, File, X, FileText, Package, Send, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppStore, FlowType } from '@/store/appStore';
+import { useQuestionnaireStore, PACKETS } from '@/store/questionnaireStore';
 import { DocumentUploadPaywall } from './DocumentUploadPaywall';
+import { PacketConfirmation } from './PacketConfirmation';
+import { PacketForm, PACKET_FIELD_LABELS, getPacketAnswers } from './packets/PacketForm';
+import { UpgradeDialog, SubmitWarningDialog } from './UpgradeDialog';
 import { toast } from 'sonner';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Define different question sets for each flow type
-const completeSteps = [
-  { id: 1, title: 'Información General', icon: Building },
-  { id: 2, title: 'Modelo de Negocio', icon: Users },
-  { id: 3, title: 'Finanzas y Metas', icon: DollarSign },
-  { id: 4, title: 'Audiencia Objetivo', icon: Target },
-];
-
-const strategicSteps = [
-  { id: 1, title: 'Plan Principal', icon: FileText },
-  { id: 2, title: 'Objetivos Estratégicos', icon: Target },
-  { id: 3, title: 'Recursos y Capacidades', icon: DollarSign },
-];
-
-const tacticSteps = [
-  { id: 1, title: 'Contexto Actual', icon: Building },
-  { id: 2, title: 'Tácticas Prioritarias', icon: Wrench },
-];
-
-const flowLabels: Record<string, { label: string; description: string; icon: typeof FileText }> = {
-  completo: { label: 'Blueprint Builder', description: 'Full plan from scratch (Q0-Q58)', icon: FileText },
-  estrategico: { label: 'Strategy Accelerator', description: 'Automated strategy insights', icon: Target },
-  tactico: { label: 'Action Autopilot', description: 'Automated execution tactics', icon: Wrench },
-};
-
-const getStepsForFlow = (flowType: FlowType) => {
-  switch (flowType) {
-    case 'estrategico':
-      return strategicSteps;
-    case 'tactico':
-      return tacticSteps;
-    default:
-      return completeSteps;
-  }
+const flowLabels: Record<string, { label: string; description: string }> = {
+  completo: { label: 'Blueprint Builder', description: '7 packets • 53 questions' },
+  estrategico: { label: 'Strategy Accelerator', description: 'Automated strategy insights' },
+  tactico: { label: 'Action Autopilot', description: 'Automated execution tactics' },
 };
 
 export function BrandOSQuestionnaire() {
+  const { hasDocumentAddon, flowType, planType, questionnaireCompleted, completeQuestionnaire } = useAppStore();
   const {
-    questionnaireStep,
-    setQuestionnaireStep,
-    questionnaireData,
-    updateQuestionnaireData,
-    completeQuestionnaire,
-    questionnaireCompleted,
-    hasDocumentAddon,
-    flowType,
-    planType,
-  } = useAppStore();
+    data, currentPacket, packetStatuses, allPacketsConfirmed, finalSubmitted,
+    showUpgradeDialog, showSubmitWarning,
+    updateData, setCurrentPacket, confirmPacket, editPacket,
+    setPacketStatus, setShowUpgradeDialog, setShowSubmitWarning,
+    setFinalSubmitted, resetQuestionnaire,
+  } = useQuestionnaireStore();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [showPacketList, setShowPacketList] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Get steps based on flow type
-  const steps = getStepsForFlow(flowType);
-  const totalSteps = steps.length;
-  const currentFlowInfo = flowType ? flowLabels[flowType] : flowLabels.completo;
-  const FlowIcon = currentFlowInfo.icon;
-
-  const handleNext = () => {
-    if (questionnaireStep < totalSteps) {
-      setQuestionnaireStep(questionnaireStep + 1);
-    } else {
-      completeQuestionnaire();
-      setIsCollapsed(true);
-    }
-  };
-
-  const handleBack = () => {
-    if (questionnaireStep > 1) {
-      setQuestionnaireStep(questionnaireStep - 1);
-    }
-  };
+  const currentFlowInfo = flowType ? flowLabels[flowType] || flowLabels.completo : flowLabels.completo;
+  const currentStatus = packetStatuses[currentPacket];
 
   const handleUploadClick = () => {
     if (hasDocumentAddon) {
@@ -98,28 +48,7 @@ export function BrandOSQuestionnaire() {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
       setUploadedFiles(prev => [...prev, ...files]);
-      toast.success(`${files.length} documento(s) subido(s). Analizando con IA...`);
-      
-      // Simulate auto-fill after upload with comprehensive mock data
-      setTimeout(() => {
-        updateQuestionnaireData({
-          name: 'TechVentures Latam S.A.',
-          website: 'https://techventures.lat',
-          socialMedia: '@techventureslatam',
-          industry: 'tech',
-          reach: 'regional',
-          businessType: 'services',
-          monthlyCustomers: '250',
-          salesApproach: 'subscription',
-          grossRevenue: '$180,000',
-          netProfitMargin: '35%',
-          marketingBudget: '$15,000',
-          businessGoals: 'Expandir operaciones a 3 países adicionales en LATAM, aumentar MRR en 40% y consolidar posición como líder en soluciones SaaS para PyMEs.',
-          idealCustomer: 'PyMEs con 20-100 empleados en sectores de retail, servicios profesionales y manufactura que buscan digitalizar sus operaciones.',
-          problemsSolved: 'Falta de herramientas digitales accesibles, procesos manuales ineficientes, dificultad para escalar operaciones sin aumentar costos.',
-        });
-        toast.success('¡Formulario auto-completado exitosamente con IA!');
-      }, 2500);
+      toast.success(`${files.length} document(s) uploaded. Analyzing with AI...`);
     }
   };
 
@@ -129,33 +58,83 @@ export function BrandOSQuestionnaire() {
 
   const handlePaywallSuccess = () => {
     setShowPaywall(false);
-    toast.success('¡Add-on activado! Ahora puedes subir documentos');
-    setTimeout(() => {
-      fileInputRef.current?.click();
-    }, 500);
+    toast.success('Add-on activated! You can now upload documents');
+    setTimeout(() => fileInputRef.current?.click(), 500);
   };
 
-  if (questionnaireCompleted && isCollapsed) {
+  const handleReviewPacket = () => {
+    setPacketStatus(currentPacket, 'review');
+  };
+
+  const handleConfirmPacket = () => {
+    confirmPacket(currentPacket);
+    toast.success(`Packet ${currentPacket + 1} confirmed ✓`);
+  };
+
+  const handleFinalSubmit = () => {
+    if (planType === 'entry') {
+      // Trial: submit directly without warning
+      setFinalSubmitted(true);
+      completeQuestionnaire();
+      setIsCollapsed(true);
+      toast.success('Questionnaire submitted! Generating your strategy...');
+    } else {
+      // Paid plans: show warning
+      setShowSubmitWarning(true);
+    }
+  };
+
+  const handleConfirmFinalSubmit = () => {
+    setShowSubmitWarning(false);
+    setFinalSubmitted(true);
+    completeQuestionnaire();
+    setIsCollapsed(true);
+    toast.success('All packets submitted! Your AI agents are now generating strategies...');
+  };
+
+  // Upgrade flow handlers
+  const handleStartOver = () => {
+    setShowUpgradeDialog(false);
+    resetQuestionnaire();
+    toast.info('Starting fresh! Take your time with detailed responses.');
+  };
+
+  const handleEditResponses = () => {
+    setShowUpgradeDialog(false);
+    // Open first packet for editing
+    editPacket(0);
+    toast.info('Review and edit your previous responses.');
+  };
+
+  const handleKeepResponses = () => {
+    setShowUpgradeDialog(false);
+    setShowSubmitWarning(true);
+  };
+
+  // Collapsed/completed state
+  if (finalSubmitted && isCollapsed) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-success-light border border-success/30 rounded-xl p-4 max-w-md"
+        className="bg-green-50 border border-green-500/30 rounded-xl p-4 max-w-md"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-success flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
             <Check className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h4 className="font-medium text-foreground text-sm">Conversación BrandOS Completada</h4>
+            <h4 className="font-medium text-foreground text-sm">BrandOS Questionnaire Completed</h4>
             <p className="text-xs text-muted-foreground">
-              {questionnaireData.name || 'Tu empresa'} • {questionnaireData.industry || 'Industria'}
+              {data.name || 'Your company'} • All 7 packets confirmed
             </p>
           </div>
         </div>
       </motion.div>
     );
   }
+
+  const confirmedCount = packetStatuses.filter(s => s === 'confirmed').length;
 
   return (
     <>
@@ -164,43 +143,56 @@ export function BrandOSQuestionnaire() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-card border border-border rounded-xl shadow-lg max-w-2xl overflow-hidden"
       >
-        <div className="bg-gradient-to-r from-primary to-purple-600 p-4 text-primary-foreground">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-primary to-primary-hover p-4 text-primary-foreground">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h3 className="font-heading font-semibold text-lg">Conversación BrandOS</h3>
-              <p className="text-sm opacity-90">Paso {questionnaireStep} de {totalSteps}</p>
+              <h3 className="font-heading font-semibold text-lg">BrandOS Conversation</h3>
+              <p className="text-sm opacity-90">
+                Packet {currentPacket + 1} of 7 • {confirmedCount}/7 confirmed
+              </p>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleUploadClick}
-              className="bg-white/20 hover:bg-white/30 text-white gap-2"
-            >
-              <FileUp className="w-4 h-4" />
-              Subir archivos
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="ghost" size="sm"
+                onClick={() => setShowPacketList(!showPacketList)}
+                className="bg-white/20 hover:bg-white/30 text-white gap-1.5"
+              >
+                <Package className="w-4 h-4" />
+                Packets
+              </Button>
+              <Button
+                variant="ghost" size="sm"
+                onClick={handleUploadClick}
+                className="bg-white/20 hover:bg-white/30 text-white gap-1.5"
+              >
+                <FileUp className="w-4 h-4" />
+                Upload
+              </Button>
+            </div>
           </div>
-          {/* Flow Type Badge */}
+
+          {/* Flow info */}
           <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
-            <FlowIcon className="w-4 h-4" />
-            <div className="flex-1">
-              <span className="font-medium text-sm">{currentFlowInfo.label}</span>
-              <span className="text-xs opacity-75 ml-2">• {currentFlowInfo.description}</span>
-            </div>
+            <FileText className="w-4 h-4" />
+            <span className="font-medium text-sm">{currentFlowInfo.label}</span>
+            <span className="text-xs opacity-75">• {currentFlowInfo.description}</span>
             {planType && (
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded">
-                {planType === 'entry' ? 'Entry Plan' : planType === 'enterprise' ? 'Enterprise' : 'Top Consultancy'}
+              <span className="text-xs bg-white/20 px-2 py-0.5 rounded ml-auto">
+                {planType === 'entry' ? 'Free Trial' : planType === 'enterprise' ? 'Foundation' : 'Growth Suite'}
               </span>
             )}
           </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-            multiple
-            onChange={handleFileChange}
-            className="hidden"
-          />
+
+          {/* Progress bar */}
+          <div className="mt-3 h-1.5 bg-white/20 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-white rounded-full transition-all duration-500"
+              style={{ width: `${(confirmedCount / 7) * 100}%` }}
+            />
+          </div>
+
+          <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" multiple onChange={handleFileChange} className="hidden" />
         </div>
 
         {/* Uploaded Files */}
@@ -208,16 +200,10 @@ export function BrandOSQuestionnaire() {
           <div className="px-4 py-2 bg-secondary/30 border-b border-border">
             <div className="flex flex-wrap gap-2">
               {uploadedFiles.map((file, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 bg-background rounded-lg px-3 py-1.5 text-sm"
-                >
+                <div key={idx} className="flex items-center gap-2 bg-background rounded-lg px-3 py-1.5 text-sm">
                   <File className="w-4 h-4 text-primary" />
                   <span className="text-foreground truncate max-w-[150px]">{file.name}</span>
-                  <button
-                    onClick={() => removeFile(idx)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
+                  <button onClick={() => removeFile(idx)} className="text-muted-foreground hover:text-foreground">
                     <X className="w-3 h-3" />
                   </button>
                 </div>
@@ -226,30 +212,66 @@ export function BrandOSQuestionnaire() {
           </div>
         )}
 
-        {/* Progress Steps */}
-        <div className="px-4 py-3 border-b border-border bg-secondary/30">
+        {/* Packet List (collapsible sidebar) */}
+        <AnimatePresence>
+          {showPacketList && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden border-b border-border"
+            >
+              <ScrollArea className="max-h-[300px]">
+                <div className="p-3 space-y-2">
+                  {PACKETS.map((packet, idx) => (
+                    <PacketConfirmation
+                      key={packet.id}
+                      packetIndex={idx}
+                      status={packetStatuses[idx]}
+                      onConfirm={() => confirmPacket(idx)}
+                      onEdit={() => editPacket(idx)}
+                      onSelect={() => {
+                        if (packetStatuses[idx] !== 'pending') {
+                          setCurrentPacket(idx);
+                          setShowPacketList(false);
+                        }
+                      }}
+                      answers={getPacketAnswers(idx, data)}
+                      fieldLabels={PACKET_FIELD_LABELS[idx] || {}}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Packet Progress Dots */}
+        <div className="px-4 py-3 border-b border-border bg-secondary/20">
           <div className="flex items-center justify-between">
-            {steps.map((step, idx) => (
-              <div key={step.id} className="flex items-center">
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-                    questionnaireStep >= step.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
+            {PACKETS.map((packet, idx) => (
+              <div key={packet.id} className="flex items-center">
+                <button
+                  onClick={() => {
+                    if (packetStatuses[idx] !== 'pending') setCurrentPacket(idx);
+                  }}
+                  disabled={packetStatuses[idx] === 'pending'}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    packetStatuses[idx] === 'confirmed'
+                      ? 'bg-green-500 text-white'
+                      : idx === currentPacket
+                      ? 'bg-primary text-primary-foreground ring-2 ring-primary/30'
+                      : packetStatuses[idx] === 'pending'
+                      ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                      : 'bg-primary/20 text-primary cursor-pointer'
                   }`}
                 >
-                  {questionnaireStep > step.id ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <step.icon className="w-4 h-4" />
-                  )}
-                </div>
-                {idx < steps.length - 1 && (
-                  <div
-                    className={`w-8 md:w-16 h-0.5 mx-1 transition-colors ${
-                      questionnaireStep > step.id ? 'bg-primary' : 'bg-muted'
-                    }`}
-                  />
+                  {packetStatuses[idx] === 'confirmed' ? <Check className="w-3.5 h-3.5" /> : idx + 1}
+                </button>
+                {idx < PACKETS.length - 1 && (
+                  <div className={`w-4 md:w-8 h-0.5 mx-0.5 transition-colors ${
+                    packetStatuses[idx] === 'confirmed' ? 'bg-green-500' : 'bg-muted'
+                  }`} />
                 )}
               </div>
             ))}
@@ -258,643 +280,123 @@ export function BrandOSQuestionnaire() {
 
         {/* Form Content */}
         <div className="p-6">
-          <AnimatePresence mode="wait">
-            {/* FLUJO COMPLETO - Step 1 (or default if no flow selected) */}
-            {(flowType === 'completo' || flowType === null) && questionnaireStep === 1 && (
-              <motion.div
-                key="completo-step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Información General
-                </h4>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nombre de la empresa</Label>
-                    <Input
-                      id="name"
-                      value={questionnaireData.name}
-                      onChange={(e) => updateQuestionnaireData({ name: e.target.value })}
-                      placeholder="Tu empresa"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="website">Sitio web</Label>
-                    <Input
-                      id="website"
-                      value={questionnaireData.website}
-                      onChange={(e) => updateQuestionnaireData({ website: e.target.value })}
-                      placeholder="https://ejemplo.com"
-                    />
-                  </div>
-                </div>
+          <ScrollArea className="max-h-[400px]">
+            <AnimatePresence mode="wait">
+              {currentStatus === 'review' ? (
+                <motion.div
+                  key={`review-${currentPacket}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-4"
+                >
+                  <div className="bg-accent/30 border border-primary/20 rounded-xl p-4">
+                    <h4 className="font-heading font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <Package className="w-4 h-4 text-primary" />
+                      Review: {PACKETS[currentPacket].title}
+                    </h4>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Please review your answers below. Once confirmed, this packet will be locked.
+                    </p>
 
-                <div className="space-y-2">
-                  <Label htmlFor="socialMedia">Redes sociales</Label>
-                  <Input
-                    id="socialMedia"
-                    value={questionnaireData.socialMedia}
-                    onChange={(e) => updateQuestionnaireData({ socialMedia: e.target.value })}
-                    placeholder="@tuempresa"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Industria</Label>
-                    <Select
-                      value={questionnaireData.industry}
-                      onValueChange={(value) => updateQuestionnaireData({ industry: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona industria" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="tech">Tecnología</SelectItem>
-                        <SelectItem value="retail">Retail</SelectItem>
-                        <SelectItem value="services">Servicios</SelectItem>
-                        <SelectItem value="manufacturing">Manufactura</SelectItem>
-                        <SelectItem value="healthcare">Salud</SelectItem>
-                        <SelectItem value="finance">Finanzas</SelectItem>
-                        <SelectItem value="other">Otro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Alcance</Label>
-                    <Select
-                      value={questionnaireData.reach}
-                      onValueChange={(value) => updateQuestionnaireData({ reach: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona alcance" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="local">Local</SelectItem>
-                        <SelectItem value="regional">Regional</SelectItem>
-                        <SelectItem value="national">Nacional</SelectItem>
-                        <SelectItem value="global">Global</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO COMPLETO - Step 2 */}
-            {(flowType === 'completo' || flowType === null) && questionnaireStep === 2 && (
-              <motion.div
-                key="completo-step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Modelo de Negocio
-                </h4>
-
-                <div className="space-y-3">
-                  <Label>¿Qué ofreces?</Label>
-                  <RadioGroup
-                    value={questionnaireData.businessType}
-                    onValueChange={(value) => updateQuestionnaireData({ businessType: value })}
-                    className="flex flex-col gap-2"
-                  >
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="products" id="products" />
-                      <Label htmlFor="products" className="cursor-pointer flex-1">
-                        Productos físicos
-                      </Label>
+                    <div className="space-y-2">
+                      {Object.entries(getPacketAnswers(currentPacket, data)).map(([key, value]) => {
+                        if (!value) return null;
+                        const label = (PACKET_FIELD_LABELS[currentPacket] || {})[key] || key;
+                        return (
+                          <div key={key} className="bg-background rounded-lg p-3 border border-border">
+                            <span className="text-xs font-medium text-muted-foreground">{label}</span>
+                            <p className="text-sm text-foreground mt-0.5 whitespace-pre-wrap">{value}</p>
+                          </div>
+                        );
+                      })}
                     </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="services" id="services" />
-                      <Label htmlFor="services" className="cursor-pointer flex-1">
-                        Servicios
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="hybrid" id="hybrid" />
-                      <Label htmlFor="hybrid" className="cursor-pointer flex-1">
-                        Híbrido (productos + servicios)
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="customers">Clientes promedio mensuales</Label>
-                  <Input
-                    id="customers"
-                    type="number"
-                    value={questionnaireData.monthlyCustomers}
-                    onChange={(e) =>
-                      updateQuestionnaireData({ monthlyCustomers: e.target.value })
-                    }
-                    placeholder="Ej: 100"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Enfoque de ventas</Label>
-                  <Select
-                    value={questionnaireData.salesApproach}
-                    onValueChange={(value) => updateQuestionnaireData({ salesApproach: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona enfoque" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="longterm">Contratos a largo plazo</SelectItem>
-                      <SelectItem value="onetime">Compras puntuales</SelectItem>
-                      <SelectItem value="subscription">Suscripción</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO COMPLETO - Step 3 */}
-            {(flowType === 'completo' || flowType === null) && questionnaireStep === 3 && (
-              <motion.div
-                key="completo-step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Finanzas y Metas
-                </h4>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="revenue">Ingresos brutos actuales (USD)</Label>
-                    <Input
-                      id="revenue"
-                      value={questionnaireData.grossRevenue}
-                      onChange={(e) => updateQuestionnaireData({ grossRevenue: e.target.value })}
-                      placeholder="Ej: $50,000"
-                    />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="margin">Margen de ganancia neta (%)</Label>
-                    <Input
-                      id="margin"
-                      value={questionnaireData.netProfitMargin}
-                      onChange={(e) =>
-                        updateQuestionnaireData({ netProfitMargin: e.target.value })
-                      }
-                      placeholder="Ej: 20%"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="budget">Presupuesto de marketing mensual</Label>
-                  <Input
-                    id="budget"
-                    value={questionnaireData.marketingBudget}
-                    onChange={(e) =>
-                      updateQuestionnaireData({ marketingBudget: e.target.value })
-                    }
-                    placeholder="Ej: $5,000"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="goals">Objetivos de negocio</Label>
-                  <Textarea
-                    id="goals"
-                    value={questionnaireData.businessGoals}
-                    onChange={(e) => updateQuestionnaireData({ businessGoals: e.target.value })}
-                    placeholder="Describe tus principales objetivos..."
-                    rows={3}
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO COMPLETO - Step 4 */}
-            {(flowType === 'completo' || flowType === null) && questionnaireStep === 4 && (
-              <motion.div
-                key="completo-step4"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Audiencia Objetivo
-                </h4>
-
-                <div className="space-y-2">
-                  <Label htmlFor="customer">Descripción de tu cliente ideal</Label>
-                  <Textarea
-                    id="customer"
-                    value={questionnaireData.idealCustomer}
-                    onChange={(e) =>
-                      updateQuestionnaireData({ idealCustomer: e.target.value })
-                    }
-                    placeholder="Describe a tu cliente ideal: edad, ubicación, intereses, comportamientos..."
-                    rows={4}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="problems">Problemas que resuelve tu producto/servicio</Label>
-                  <Textarea
-                    id="problems"
-                    value={questionnaireData.problemsSolved}
-                    onChange={(e) =>
-                      updateQuestionnaireData({ problemsSolved: e.target.value })
-                    }
-                    placeholder="¿Qué problemas específicos resuelve tu oferta?"
-                    rows={4}
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO ESTRATÉGICO - Step 1: Plan Principal */}
-            {flowType === 'estrategico' && questionnaireStep === 1 && (
-              <motion.div
-                key="estrategico-step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Plan Principal Existente
-                </h4>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Ya tienes un plan de negocio. Cuéntanos sobre él para crear estrategias alineadas.
-                </p>
-
-                <div className="space-y-2">
-                  <Label htmlFor="currentPlan">Describe tu plan de negocio actual</Label>
-                  <Textarea
-                    id="currentPlan"
-                    value={questionnaireData.businessGoals}
-                    onChange={(e) => updateQuestionnaireData({ businessGoals: e.target.value })}
-                    placeholder="Resumen de tu visión, misión y estrategia principal actual..."
-                    rows={4}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="currentPosition">¿Cuál es tu posición actual en el mercado?</Label>
-                  <Textarea
-                    id="currentPosition"
-                    value={questionnaireData.idealCustomer}
-                    onChange={(e) => updateQuestionnaireData({ idealCustomer: e.target.value })}
-                    placeholder="Describe tu participación de mercado, ventajas competitivas, diferenciadores..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Industria</Label>
-                    <Select
-                      value={questionnaireData.industry}
-                      onValueChange={(value) => updateQuestionnaireData({ industry: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona industria" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="tech">Tecnología</SelectItem>
-                        <SelectItem value="retail">Retail</SelectItem>
-                        <SelectItem value="services">Servicios</SelectItem>
-                        <SelectItem value="manufacturing">Manufactura</SelectItem>
-                        <SelectItem value="healthcare">Salud</SelectItem>
-                        <SelectItem value="finance">Finanzas</SelectItem>
-                        <SelectItem value="other">Otro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Alcance actual</Label>
-                    <Select
-                      value={questionnaireData.reach}
-                      onValueChange={(value) => updateQuestionnaireData({ reach: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona alcance" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="local">Local</SelectItem>
-                        <SelectItem value="regional">Regional</SelectItem>
-                        <SelectItem value="national">Nacional</SelectItem>
-                        <SelectItem value="global">Global</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO ESTRATÉGICO - Step 2: Objetivos Estratégicos */}
-            {flowType === 'estrategico' && questionnaireStep === 2 && (
-              <motion.div
-                key="estrategico-step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Objetivos Estratégicos
-                </h4>
-
-                <div className="space-y-2">
-                  <Label htmlFor="strategicGoals">¿Qué objetivos estratégicos quieres alcanzar?</Label>
-                  <Textarea
-                    id="strategicGoals"
-                    value={questionnaireData.problemsSolved}
-                    onChange={(e) => updateQuestionnaireData({ problemsSolved: e.target.value })}
-                    placeholder="Describe 3-5 objetivos estratégicos clave para los próximos 12-18 meses..."
-                    rows={4}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Prioridad principal</Label>
-                  <RadioGroup
-                    value={questionnaireData.businessType}
-                    onValueChange={(value) => updateQuestionnaireData({ businessType: value })}
-                    className="flex flex-col gap-2"
-                  >
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="growth" id="growth" />
-                      <Label htmlFor="growth" className="cursor-pointer flex-1">
-                        Crecimiento de ingresos
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="market" id="market" />
-                      <Label htmlFor="market" className="cursor-pointer flex-1">
-                        Expansión de mercado
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="efficiency" id="efficiency" />
-                      <Label htmlFor="efficiency" className="cursor-pointer flex-1">
-                        Eficiencia operativa
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="brand" id="brand" />
-                      <Label htmlFor="brand" className="cursor-pointer flex-1">
-                        Posicionamiento de marca
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO ESTRATÉGICO - Step 3: Recursos y Capacidades */}
-            {flowType === 'estrategico' && questionnaireStep === 3 && (
-              <motion.div
-                key="estrategico-step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Recursos y Capacidades
-                </h4>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="budget">Presupuesto disponible para estrategia</Label>
-                    <Input
-                      id="budget"
-                      value={questionnaireData.marketingBudget}
-                      onChange={(e) => updateQuestionnaireData({ marketingBudget: e.target.value })}
-                      placeholder="Ej: $25,000"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="team">Tamaño del equipo</Label>
-                    <Input
-                      id="team"
-                      value={questionnaireData.monthlyCustomers}
-                      onChange={(e) => updateQuestionnaireData({ monthlyCustomers: e.target.value })}
-                      placeholder="Ej: 15"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Capacidades internas</Label>
-                  <Select
-                    value={questionnaireData.salesApproach}
-                    onValueChange={(value) => updateQuestionnaireData({ salesApproach: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="¿Qué tan preparados están?" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="high">Alta - Equipo experimentado y recursos completos</SelectItem>
-                      <SelectItem value="medium">Media - Algunas capacidades, necesitamos apoyo</SelectItem>
-                      <SelectItem value="low">Baja - Necesitamos desarrollar capacidades</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="constraints">Restricciones o desafíos conocidos</Label>
-                  <Textarea
-                    id="constraints"
-                    value={questionnaireData.grossRevenue}
-                    onChange={(e) => updateQuestionnaireData({ grossRevenue: e.target.value })}
-                    placeholder="¿Qué limitaciones o desafíos enfrentas para ejecutar la estrategia?"
-                    rows={3}
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO TÁCTICO - Step 1: Contexto Actual */}
-            {flowType === 'tactico' && questionnaireStep === 1 && (
-              <motion.div
-                key="tactico-step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Contexto Actual
-                </h4>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Ya tienes plan y estrategia. Vamos directo a las tácticas de implementación.
-                </p>
-
-                <div className="space-y-2">
-                  <Label htmlFor="currentStrategy">¿Cuál es tu estrategia actual?</Label>
-                  <Textarea
-                    id="currentStrategy"
-                    value={questionnaireData.businessGoals}
-                    onChange={(e) => updateQuestionnaireData({ businessGoals: e.target.value })}
-                    placeholder="Resumen breve de la estrategia que quieres implementar..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Área de enfoque táctico</Label>
-                  <RadioGroup
-                    value={questionnaireData.businessType}
-                    onValueChange={(value) => updateQuestionnaireData({ businessType: value })}
-                    className="flex flex-col gap-2"
-                  >
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="marketing" id="marketing" />
-                      <Label htmlFor="marketing" className="cursor-pointer flex-1">
-                        Marketing y adquisición de clientes
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="sales" id="sales" />
-                      <Label htmlFor="sales" className="cursor-pointer flex-1">
-                        Ventas y conversión
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="product" id="product" />
-                      <Label htmlFor="product" className="cursor-pointer flex-1">
-                        Producto y operaciones
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-secondary/50 transition-colors">
-                      <RadioGroupItem value="all" id="all" />
-                      <Label htmlFor="all" className="cursor-pointer flex-1">
-                        Tácticas integrales (todas las áreas)
-                      </Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="timeline">Horizonte de implementación</Label>
-                  <Select
-                    value={questionnaireData.salesApproach}
-                    onValueChange={(value) => updateQuestionnaireData({ salesApproach: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="¿En cuánto tiempo?" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="30days">30 días - Acciones inmediatas</SelectItem>
-                      <SelectItem value="90days">90 días - Plan trimestral</SelectItem>
-                      <SelectItem value="6months">6 meses - Plan semestral</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </motion.div>
-            )}
-
-            {/* FLUJO TÁCTICO - Step 2: Tácticas Prioritarias */}
-            {flowType === 'tactico' && questionnaireStep === 2 && (
-              <motion.div
-                key="tactico-step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
-                <h4 className="font-heading font-semibold text-foreground mb-4">
-                  Tácticas Prioritarias
-                </h4>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="budget">Presupuesto táctico disponible</Label>
-                    <Input
-                      id="budget"
-                      value={questionnaireData.marketingBudget}
-                      onChange={(e) => updateQuestionnaireData({ marketingBudget: e.target.value })}
-                      placeholder="Ej: $10,000"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="team">Personas disponibles para ejecutar</Label>
-                    <Input
-                      id="team"
-                      value={questionnaireData.monthlyCustomers}
-                      onChange={(e) => updateQuestionnaireData({ monthlyCustomers: e.target.value })}
-                      placeholder="Ej: 3"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="quickWins">¿Qué "quick wins" buscas?</Label>
-                  <Textarea
-                    id="quickWins"
-                    value={questionnaireData.problemsSolved}
-                    onChange={(e) => updateQuestionnaireData({ problemsSolved: e.target.value })}
-                    placeholder="Describe resultados rápidos que esperas lograr..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="kpis">KPIs objetivo</Label>
-                  <Textarea
-                    id="kpis"
-                    value={questionnaireData.idealCustomer}
-                    onChange={(e) => updateQuestionnaireData({ idealCustomer: e.target.value })}
-                    placeholder="¿Qué métricas quieres mover? (ej: +20% leads, -15% CAC, +30% conversión)"
-                    rows={3}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </motion.div>
+              ) : (
+                <PacketForm
+                  key={`form-${currentPacket}`}
+                  packetIndex={currentPacket}
+                  data={data}
+                  onUpdate={updateData}
+                />
+              )}
+            </AnimatePresence>
+          </ScrollArea>
         </div>
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          <Button
-            variant="ghost"
-            onClick={handleBack}
-            disabled={questionnaireStep === 1}
-            className="gap-2"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Atrás
-          </Button>
-          <Button onClick={handleNext} className="btn-primary-gradient gap-2">
-            {questionnaireStep === totalSteps ? (
-              <>
-                Finalizar
-                <Check className="w-4 h-4" />
-              </>
-            ) : (
-              <>
-                Siguiente
-                <ChevronRight className="w-4 h-4" />
-              </>
-            )}
-          </Button>
+          {currentStatus === 'review' ? (
+            <>
+              <Button variant="ghost" onClick={() => editPacket(currentPacket)} className="gap-2">
+                <ChevronLeft className="w-4 h-4" /> Edit Answers
+              </Button>
+              <Button onClick={handleConfirmPacket} className="btn-primary-gradient gap-2">
+                <Check className="w-4 h-4" /> Confirm & Lock Packet
+              </Button>
+            </>
+          ) : allPacketsConfirmed ? (
+            <>
+              <div className="text-sm text-muted-foreground flex items-center gap-2">
+                <Check className="w-4 h-4 text-green-500" /> All 7 packets confirmed
+              </div>
+              <Button onClick={handleFinalSubmit} className="btn-primary-gradient gap-2">
+                <Send className="w-4 h-4" />
+                I have finished editing and I am happy with my responses
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  if (currentPacket > 0) setCurrentPacket(currentPacket - 1);
+                }}
+                disabled={currentPacket === 0}
+                className="gap-2"
+              >
+                <ChevronLeft className="w-4 h-4" /> Back
+              </Button>
+              <Button onClick={handleReviewPacket} className="btn-primary-gradient gap-2">
+                Review Answers <ChevronRight className="w-4 h-4" />
+              </Button>
+            </>
+          )}
         </div>
+
+        {/* Final submit warning when all packets confirmed */}
+        {allPacketsConfirmed && !finalSubmitted && (
+          <div className="px-6 py-3 bg-warning/10 border-t border-warning/30">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+              <p className="text-xs text-foreground">
+                <strong>Note:</strong> Once submitted, re-editing costs $2.00 per question and $50.00 for a full resubmission.
+                Make sure all answers are accurate before submitting.
+              </p>
+            </div>
+          </div>
+        )}
       </motion.div>
 
       <DocumentUploadPaywall
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
         onSuccess={handlePaywallSuccess}
+      />
+
+      <UpgradeDialog
+        isOpen={showUpgradeDialog}
+        onClose={() => setShowUpgradeDialog(false)}
+        onStartOver={handleStartOver}
+        onEditResponses={handleEditResponses}
+        onKeepResponses={handleKeepResponses}
+      />
+
+      <SubmitWarningDialog
+        isOpen={showSubmitWarning}
+        onClose={() => setShowSubmitWarning(false)}
+        onConfirmSubmit={handleConfirmFinalSubmit}
       />
     </>
   );
