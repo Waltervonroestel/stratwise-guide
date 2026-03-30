@@ -34,77 +34,11 @@ export function FinalSummaryPacket({
       animate={{ opacity: 1, y: 0 }}
       className="space-y-5"
     >
-      {/* Upgrade Banner */}
-      {isUpgraded && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-gradient-to-r from-primary to-primary-hover rounded-xl p-5 text-primary-foreground"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <ArrowUp className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-heading font-bold text-lg">
-                Upgraded from Free Trial to {upgradedPlanName}
-              </h3>
-              <p className="text-sm opacity-90">
-                Do you want to choose what happens with the responses from your free trial?
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2 mt-4">
-            <button
-              onClick={onStartOver}
-              className="w-full flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all text-left"
-            >
-              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                <RefreshCw className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm">A) Start over</h4>
-                <p className="text-xs opacity-80">Chat starts over from the beginning.</p>
-              </div>
-            </button>
-
-            <button
-              onClick={onEditResponses}
-              className="w-full flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all text-left"
-            >
-              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                <Edit3 className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm">B) Edit the responses you used in your trial</h4>
-                <p className="text-xs opacity-80">They will see all the answers from their original Q&amp;A and can edit them.</p>
-              </div>
-            </button>
-
-            <button
-              onClick={onKeepResponses}
-              className="w-full flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all text-left"
-            >
-              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                <CheckCircle className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-sm">C) I am happy with my response please generate my reports</h4>
-                <p className="text-xs opacity-80">This will open the warning box before final submission.</p>
-              </div>
-            </button>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Full Summary Header */}
       <div className="flex items-center gap-2">
         <Package className="w-5 h-5 text-primary" />
         <h3 className="font-heading font-bold text-foreground text-lg">Complete Summary — All 7 Packets</h3>
       </div>
 
-      {/* All Packets */}
       <ScrollArea className="max-h-[500px]">
         <div className="space-y-4 pr-2">
           {PACKETS.map((packet, idx) => {
@@ -165,7 +99,69 @@ export function FinalSummaryPacket({
         </div>
       </ScrollArea>
 
-      {/* Cost Warning */}
+      {isUpgraded && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary to-primary-hover p-5 text-primary-foreground"
+        >
+          <div className="mb-3 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
+              <ArrowUp className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-heading text-lg font-bold">
+                Upgraded from Free Trial to {upgradedPlanName}
+              </h3>
+              <p className="text-sm opacity-90">
+                Do you want to: A) start over, B) edit the responses you used in your trial, or C) generate your reports?
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-2">
+            <button
+              onClick={onStartOver}
+              className="w-full flex items-center gap-3 rounded-lg bg-white/10 p-3 text-left transition-all hover:bg-white/20"
+            >
+              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                <RefreshCw className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold">A) Start over</h4>
+                <p className="text-xs opacity-80">Chat starts over from the beginning.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={onEditResponses}
+              className="w-full flex items-center gap-3 rounded-lg bg-white/10 p-3 text-left transition-all hover:bg-white/20"
+            >
+              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                <Edit3 className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold">B) Edit the responses you used in your trial</h4>
+                <p className="text-xs opacity-80">See all the answers from your original Q&amp;A and edit them.</p>
+              </div>
+            </button>
+
+            <button
+              onClick={onKeepResponses}
+              className="w-full flex items-center gap-3 rounded-lg bg-white/10 p-3 text-left transition-all hover:bg-white/20"
+            >
+              <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                <CheckCircle className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold">C) I am happy with my response please generate my reports</h4>
+                <p className="text-xs opacity-80">This will open the warning box before final submission.</p>
+              </div>
+            </button>
+          </div>
+        </motion.div>
+      )}
+
       {!isUpgraded && (
         <div className="bg-warning/10 border border-warning/30 rounded-xl p-4">
           <div className="flex items-start gap-2">
