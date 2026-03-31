@@ -211,7 +211,7 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
       showSubmitWarning: false,
       finalSubmitted: false,
       previousPlanType: null,
-      upgradedToPlan: null,
+      isAutoFilled: false,
 
       updateData: (partial) => set((s) => ({ data: { ...s.data, ...partial } })),
 
