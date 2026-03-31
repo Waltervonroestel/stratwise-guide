@@ -453,7 +453,6 @@ export function BrandOSQuestionnaire() {
             <ScrollArea className="max-h-[400px]">
               {/* Auto-fill banner shown above each packet during review */}
               {isAutoFilled && currentStatus === 'review' && <AutoFilledBanner />}
-            <ScrollArea className="max-h-[400px]">
               <AnimatePresence mode="wait">
               {currentStatus === 'review' ? (
                 <motion.div
@@ -469,7 +468,9 @@ export function BrandOSQuestionnaire() {
                       Review: {PACKETS[currentPacket].title}
                     </h4>
                     <p className="text-xs text-muted-foreground mb-4">
-                      Please review your answers below. Once confirmed, this packet will be locked.
+                      {isAutoFilled
+                        ? 'These answers were generated from your documents. Confirm to lock, or edit if needed.'
+                        : 'Please review your answers below. Once confirmed, this packet will be locked.'}
                     </p>
 
                     <div className="space-y-2">
