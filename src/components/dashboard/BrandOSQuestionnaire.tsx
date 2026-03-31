@@ -56,6 +56,13 @@ export function BrandOSQuestionnaire() {
     if (files.length > 0) {
       setUploadedFiles(prev => [...prev, ...files]);
       toast.success(`${files.length} document(s) uploaded. Analyzing with AI...`);
+      // Simulate AI processing delay, then auto-fill
+      setTimeout(() => {
+        autoFillFromDocuments();
+        setShowAutoFilledReview(true);
+        setShowFinalSummary(false);
+        toast.success('All 53 questions answered automatically from your documents!');
+      }, 2000);
     }
   };
 
