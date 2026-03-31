@@ -59,8 +59,8 @@ export function BrandOSQuestionnaire() {
       // Simulate AI processing delay, then auto-fill
       setTimeout(() => {
         autoFillFromDocuments();
-        setShowAutoFilledReview(true);
         setShowFinalSummary(false);
+        setCurrentPacket(0);
         toast.success('All 53 questions answered automatically from your documents!');
       }, 2000);
     }
