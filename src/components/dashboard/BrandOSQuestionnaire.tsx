@@ -36,7 +36,7 @@ export function BrandOSQuestionnaire() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
   const [showFinalSummary, setShowFinalSummary] = useState(false);
-  const [showAutoFilledReview, setShowAutoFilledReview] = useState(false);
+  
   const [showUpgradePicker, setShowUpgradePicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -59,8 +59,8 @@ export function BrandOSQuestionnaire() {
       // Simulate AI processing delay, then auto-fill
       setTimeout(() => {
         autoFillFromDocuments();
-        setShowAutoFilledReview(true);
         setShowFinalSummary(false);
+        setCurrentPacket(0);
         toast.success('All 53 questions answered automatically from your documents!');
       }, 2000);
     }
@@ -264,8 +264,8 @@ export function BrandOSQuestionnaire() {
                   toast.success('Analyzing documents with AI...');
                   setTimeout(() => {
                     autoFillFromDocuments();
-                    setShowAutoFilledReview(true);
                     setShowFinalSummary(false);
+                    setCurrentPacket(0);
                     toast.success('All 53 questions answered automatically!');
                   }, 2000);
                 }}
@@ -434,25 +434,7 @@ export function BrandOSQuestionnaire() {
 
         {/* Form Content */}
         <div className="p-6">
-          {showAutoFilledReview ? (
-            <ScrollArea className="max-h-[500px]">
-              <AutoFilledBanner />
-              <FinalSummaryPacket
-                data={data}
-                planType={planType}
-                previousPlan={previousPlanType as 'entry' | null}
-                showUpgradeChoices={true}
-                upgradedToPlan={upgradedToPlan}
-                onStartOver={handleStartOver}
-                onEditResponses={handleEditResponses}
-                onKeepResponses={handleKeepResponses}
-                onEditPacket={(idx) => {
-                  editPacket(idx);
-                  setShowAutoFilledReview(false);
-                }}
-              />
-            </ScrollArea>
-          ) : showFinalSummary ? (
+          {showFinalSummary ? (
             <FinalSummaryPacket
               data={data}
               planType={planType}
@@ -469,6 +451,8 @@ export function BrandOSQuestionnaire() {
             />
           ) : (
             <ScrollArea className="max-h-[400px]">
+              {/* Auto-fill banner shown above each packet during review */}
+              {isAutoFilled && currentStatus === 'review' && <AutoFilledBanner />}
               <AnimatePresence mode="wait">
               {currentStatus === 'review' ? (
                 <motion.div
@@ -484,7 +468,9 @@ export function BrandOSQuestionnaire() {
                       Review: {PACKETS[currentPacket].title}
                     </h4>
                     <p className="text-xs text-muted-foreground mb-4">
-                      Please review your answers below. Once confirmed, this packet will be locked.
+                      {isAutoFilled
+                        ? 'These answers were generated from your documents. Confirm to lock, or edit if needed.'
+                        : 'Please review your answers below. Once confirmed, this packet will be locked.'}
                     </p>
 
                     <div className="space-y-2">
@@ -516,11 +502,7 @@ export function BrandOSQuestionnaire() {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          {showAutoFilledReview ? (
-            <div className="flex w-full items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-              <ArrowUp className="h-4 w-4 text-primary" /> Choose an option above to continue
-            </div>
-          ) : showFinalSummary ? (
+          {showFinalSummary ? (
             <div className="flex w-full items-center justify-center gap-2 text-center text-sm text-muted-foreground">
               <ArrowUp className="h-4 w-4 text-primary" /> Choose an option above to continue
             </div>
