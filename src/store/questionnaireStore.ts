@@ -265,7 +265,22 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         allPacketsConfirmed: false,
         finalSubmitted: false,
         showSubmitWarning: false,
+        isAutoFilled: false,
       }),
+
+      autoFillFromDocuments: () => {
+        const reviewStatuses: PacketStatus[] = Array(7).fill('review');
+        set({
+          data: autoFilledData,
+          packetStatuses: reviewStatuses,
+          currentPacket: 0,
+          allPacketsConfirmed: false,
+          isAutoFilled: true,
+          finalSubmitted: false,
+        });
+      },
+
+      setIsAutoFilled: (val) => set({ isAutoFilled: val }),
 
       handlePlanUpgrade: (previousPlan, newPlan) => {
         if (previousPlan === 'entry' && newPlan !== 'entry') {
