@@ -441,7 +441,7 @@ export function BrandOSQuestionnaire() {
                 data={data}
                 planType={planType}
                 previousPlan={previousPlanType as 'entry' | null}
-                showUpgradeChoices={false}
+                showUpgradeChoices={true}
                 upgradedToPlan={upgradedToPlan}
                 onStartOver={handleStartOver}
                 onEditResponses={handleEditResponses}
@@ -517,17 +517,9 @@ export function BrandOSQuestionnaire() {
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
           {showAutoFilledReview ? (
-            <>
-              <div className="text-sm text-muted-foreground flex items-center gap-2">
-                <Check className="w-4 h-4 text-green-500" /> AI-filled • Review packets above
-              </div>
-              <Button onClick={() => {
-                setShowAutoFilledReview(false);
-                setShowSubmitWarning(true);
-              }} className="btn-primary-gradient gap-2">
-                <Check className="w-4 h-4" /> Approve All & Submit
-              </Button>
-            </>
+            <div className="flex w-full items-center justify-center gap-2 text-center text-sm text-muted-foreground">
+              <ArrowUp className="h-4 w-4 text-primary" /> Choose an option above to continue
+            </div>
           ) : showFinalSummary ? (
             <div className="flex w-full items-center justify-center gap-2 text-center text-sm text-muted-foreground">
               <ArrowUp className="h-4 w-4 text-primary" /> Choose an option above to continue
