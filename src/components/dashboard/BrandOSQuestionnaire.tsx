@@ -258,6 +258,21 @@ export function BrandOSQuestionnaire() {
                 <FileUp className="w-4 h-4" />
                 Upload
               </Button>
+              <Button
+                variant="ghost" size="sm"
+                onClick={() => {
+                  toast.success('Analyzing documents with AI...');
+                  setTimeout(() => {
+                    autoFillFromDocuments();
+                    setShowAutoFilledReview(true);
+                    setShowFinalSummary(false);
+                    toast.success('All 53 questions answered automatically!');
+                  }, 2000);
+                }}
+                className="bg-yellow-400/90 hover:bg-yellow-400 text-black gap-1.5 font-semibold"
+              >
+                ⚡ Demo Auto-Fill
+              </Button>
             </div>
           </div>
 
