@@ -9,6 +9,7 @@ import { PacketConfirmation } from './PacketConfirmation';
 import { PacketForm, PACKET_FIELD_LABELS, getPacketAnswers } from './packets/PacketForm';
 import { UpgradeDialog, SubmitWarningDialog } from './UpgradeDialog';
 import { FinalSummaryPacket } from './FinalSummaryPacket';
+import { AutoFilledBanner } from './AutoFilledBanner';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
