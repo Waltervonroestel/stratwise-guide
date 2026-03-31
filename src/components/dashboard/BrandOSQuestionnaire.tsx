@@ -264,8 +264,8 @@ export function BrandOSQuestionnaire() {
                   toast.success('Analyzing documents with AI...');
                   setTimeout(() => {
                     autoFillFromDocuments();
-                    setShowAutoFilledReview(true);
                     setShowFinalSummary(false);
+                    setCurrentPacket(0);
                     toast.success('All 53 questions answered automatically!');
                   }, 2000);
                 }}
