@@ -450,7 +450,7 @@ export function BrandOSQuestionnaire() {
               }}
             />
           ) : (
-            <ScrollArea className="max-h-[400px]">
+            <ScrollArea className="max-h-[600px]">
               {/* Auto-fill banner shown above each packet during review */}
               {isAutoFilled && currentStatus === 'review' && <AutoFilledBanner />}
               <AnimatePresence mode="wait">
