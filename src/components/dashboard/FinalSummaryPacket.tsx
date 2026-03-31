@@ -40,7 +40,7 @@ export function FinalSummaryPacket({
           className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary to-primary-hover p-5 text-primary-foreground"
         >
           <div className="mb-3">
-            <h3 className="font-heading text-lg font-bold">Do you want to:</h3>
+            <h3 className="font-heading text-lg font-bold">Thank you for upgrading, before we create the reports do you want to:</h3>
           </div>
 
           <div className="space-y-2">
