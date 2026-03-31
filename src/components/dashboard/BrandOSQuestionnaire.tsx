@@ -434,25 +434,7 @@ export function BrandOSQuestionnaire() {
 
         {/* Form Content */}
         <div className="p-6">
-          {showAutoFilledReview ? (
-            <ScrollArea className="max-h-[500px]">
-              <AutoFilledBanner />
-              <FinalSummaryPacket
-                data={data}
-                planType={planType}
-                previousPlan={previousPlanType as 'entry' | null}
-                showUpgradeChoices={true}
-                upgradedToPlan={upgradedToPlan}
-                onStartOver={handleStartOver}
-                onEditResponses={handleEditResponses}
-                onKeepResponses={handleKeepResponses}
-                onEditPacket={(idx) => {
-                  editPacket(idx);
-                  setShowAutoFilledReview(false);
-                }}
-              />
-            </ScrollArea>
-          ) : showFinalSummary ? (
+          {showFinalSummary ? (
             <FinalSummaryPacket
               data={data}
               planType={planType}
@@ -468,6 +450,9 @@ export function BrandOSQuestionnaire() {
               }}
             />
           ) : (
+            <ScrollArea className="max-h-[400px]">
+              {/* Auto-fill banner shown above each packet during review */}
+              {isAutoFilled && currentStatus === 'review' && <AutoFilledBanner />}
             <ScrollArea className="max-h-[400px]">
               <AnimatePresence mode="wait">
               {currentStatus === 'review' ? (
