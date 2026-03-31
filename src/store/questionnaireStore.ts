@@ -305,6 +305,7 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         finalSubmitted: state.finalSubmitted,
         previousPlanType: state.previousPlanType,
         upgradedToPlan: state.upgradedToPlan,
+        isAutoFilled: state.isAutoFilled,
       }),
     }
   )
