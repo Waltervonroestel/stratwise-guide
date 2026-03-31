@@ -24,9 +24,11 @@ export function BrandOSQuestionnaire() {
   const {
     data, currentPacket, packetStatuses, allPacketsConfirmed, finalSubmitted,
     showUpgradeDialog, showSubmitWarning, previousPlanType, upgradedToPlan,
+    isAutoFilled,
     updateData, setCurrentPacket, confirmPacket, editPacket,
     setPacketStatus, setShowUpgradeDialog, setShowSubmitWarning,
     setFinalSubmitted, resetQuestionnaire, handlePlanUpgrade,
+    autoFillFromDocuments, setIsAutoFilled,
   } = useQuestionnaireStore();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
