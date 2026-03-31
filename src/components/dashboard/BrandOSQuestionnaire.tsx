@@ -36,6 +36,7 @@ export function BrandOSQuestionnaire() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
   const [showFinalSummary, setShowFinalSummary] = useState(false);
+  const [showAutoFilledReview, setShowAutoFilledReview] = useState(false);
   const [showUpgradePicker, setShowUpgradePicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
