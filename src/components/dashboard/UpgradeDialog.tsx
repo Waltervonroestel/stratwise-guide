@@ -46,7 +46,7 @@ export function UpgradeDialog({
 
       <div className="space-y-4 p-5">
         <div>
-          <h3 className="font-heading text-lg font-semibold text-foreground">Do you want to:</h3>
+          <h3 className="font-heading text-lg font-semibold text-foreground">Thank you for upgrading, before we create the reports do you want to:</h3>
           <p className="text-sm text-muted-foreground">
             Choose how you want to continue with the responses you used in your free trial.
           </p>
