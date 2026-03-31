@@ -9,6 +9,7 @@ import { PacketConfirmation } from './PacketConfirmation';
 import { PacketForm, PACKET_FIELD_LABELS, getPacketAnswers } from './packets/PacketForm';
 import { UpgradeDialog, SubmitWarningDialog } from './UpgradeDialog';
 import { FinalSummaryPacket } from './FinalSummaryPacket';
+import { AutoFilledBanner } from './AutoFilledBanner';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -23,9 +24,11 @@ export function BrandOSQuestionnaire() {
   const {
     data, currentPacket, packetStatuses, allPacketsConfirmed, finalSubmitted,
     showUpgradeDialog, showSubmitWarning, previousPlanType, upgradedToPlan,
+    isAutoFilled,
     updateData, setCurrentPacket, confirmPacket, editPacket,
     setPacketStatus, setShowUpgradeDialog, setShowSubmitWarning,
     setFinalSubmitted, resetQuestionnaire, handlePlanUpgrade,
+    autoFillFromDocuments, setIsAutoFilled,
   } = useQuestionnaireStore();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -33,6 +36,7 @@ export function BrandOSQuestionnaire() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [showPacketList, setShowPacketList] = useState(false);
   const [showFinalSummary, setShowFinalSummary] = useState(false);
+  const [showAutoFilledReview, setShowAutoFilledReview] = useState(false);
   const [showUpgradePicker, setShowUpgradePicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -52,6 +56,13 @@ export function BrandOSQuestionnaire() {
     if (files.length > 0) {
       setUploadedFiles(prev => [...prev, ...files]);
       toast.success(`${files.length} document(s) uploaded. Analyzing with AI...`);
+      // Simulate AI processing delay, then auto-fill
+      setTimeout(() => {
+        autoFillFromDocuments();
+        setShowAutoFilledReview(true);
+        setShowFinalSummary(false);
+        toast.success('All 53 questions answered automatically from your documents!');
+      }, 2000);
     }
   };
 
@@ -408,7 +419,25 @@ export function BrandOSQuestionnaire() {
 
         {/* Form Content */}
         <div className="p-6">
-          {showFinalSummary ? (
+          {showAutoFilledReview ? (
+            <ScrollArea className="max-h-[500px]">
+              <AutoFilledBanner />
+              <FinalSummaryPacket
+                data={data}
+                planType={planType}
+                previousPlan={previousPlanType as 'entry' | null}
+                showUpgradeChoices={false}
+                upgradedToPlan={upgradedToPlan}
+                onStartOver={handleStartOver}
+                onEditResponses={handleEditResponses}
+                onKeepResponses={handleKeepResponses}
+                onEditPacket={(idx) => {
+                  editPacket(idx);
+                  setShowAutoFilledReview(false);
+                }}
+              />
+            </ScrollArea>
+          ) : showFinalSummary ? (
             <FinalSummaryPacket
               data={data}
               planType={planType}
@@ -472,7 +501,19 @@ export function BrandOSQuestionnaire() {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-secondary/20">
-          {showFinalSummary ? (
+          {showAutoFilledReview ? (
+            <>
+              <div className="text-sm text-muted-foreground flex items-center gap-2">
+                <Check className="w-4 h-4 text-green-500" /> AI-filled • Review packets above
+              </div>
+              <Button onClick={() => {
+                setShowAutoFilledReview(false);
+                setShowSubmitWarning(true);
+              }} className="btn-primary-gradient gap-2">
+                <Check className="w-4 h-4" /> Approve All & Submit
+              </Button>
+            </>
+          ) : showFinalSummary ? (
             <div className="flex w-full items-center justify-center gap-2 text-center text-sm text-muted-foreground">
               <ArrowUp className="h-4 w-4 text-primary" /> Choose an option above to continue
             </div>

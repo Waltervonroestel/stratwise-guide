@@ -93,6 +93,7 @@ interface QuestionnaireStore {
   finalSubmitted: boolean;
   previousPlanType: string | null;
   upgradedToPlan: string | null;
+  isAutoFilled: boolean;
 
   updateData: (partial: Partial<ExtendedQuestionnaireData>) => void;
   setCurrentPacket: (packet: number) => void;
@@ -106,7 +107,68 @@ interface QuestionnaireStore {
   resetQuestionnaire: () => void;
   editPacket: (packetIndex: number) => void;
   handlePlanUpgrade: (previousPlan: string, newPlan: string) => void;
+  autoFillFromDocuments: () => void;
+  setIsAutoFilled: (val: boolean) => void;
 }
+
+const autoFilledData: ExtendedQuestionnaireData = {
+  personalIntro: 'John Smith, CEO & Co-Founder with 12+ years in SaaS and digital marketing.',
+  name: 'NovaTech Solutions',
+  companyNameLocation: 'NovaTech Solutions Inc. — San Francisco, CA',
+  website: 'https://novatech.io',
+  socialMedia: 'LinkedIn: /novatech • Twitter: @novatech_io • Instagram: @novatech.solutions',
+  industry: 'B2B SaaS — Marketing Automation & Analytics',
+  whatCompanyDoes: 'NovaTech provides AI-powered marketing automation tools that help mid-market companies optimize their customer acquisition funnels and reduce CAC by up to 40%.',
+  mission: 'To democratize enterprise-grade marketing intelligence for growing businesses worldwide.',
+  vision: 'A world where every business, regardless of size, has access to data-driven marketing strategies that were once exclusive to Fortune 500 companies.',
+  businessScope: 'North America (primary), expanding to UK and DACH region in Q3 2026.',
+  mainObjective: 'Achieve $5M ARR by end of 2026 while maintaining a net revenue retention rate above 120%.',
+  businessFocus: 'B2B SaaS with a product-led growth model complemented by inside sales for enterprise deals.',
+  timeInMarket: '3.5 years — launched MVP in Q3 2022, reached product-market fit in early 2024.',
+  mainCompetitors: 'HubSpot (enterprise), Mailchimp (SMB), ActiveCampaign (mid-market), Marketo (enterprise).',
+  monthlyCustomers: 'Approximately 2,400 active accounts with an average of 8 users per account.',
+  customerReach: 'Primarily inbound — blog, SEO, webinars, and partner referrals drive 70% of new signups.',
+  salesChannels: 'Self-serve freemium (60%), inside sales (30%), channel partners (10%).',
+  revenueModel: 'Subscription-based with three tiers: Starter ($49/mo), Growth ($199/mo), Enterprise ($799/mo). Annual plans get 20% discount.',
+  revenueGoal: '$5M ARR by December 2026, up from current $2.8M ARR.',
+  grossRevenue: '$2.8M ARR as of Q1 2026. Quarterly revenue: $720K last quarter.',
+  netProfitMargin: '12% net margin — reinvesting heavily in R&D and go-to-market expansion.',
+  yoyGrowth: '85% year-over-year revenue growth. Customer count grew 62% YoY.',
+  salesObjectives: 'Close 50 enterprise deals ($799/mo+) per quarter. Reduce sales cycle from 45 to 30 days.',
+  keyKPIs: 'MRR growth rate, CAC payback period (<12 months), LTV:CAC ratio (target 4:1), NRR (>120%), churn rate (<3% monthly).',
+  productLifecycle: 'Growth stage — core platform is mature, launching AI Insights module in Q2 2026.',
+  pricingStrategy: 'Value-based pricing anchored on ROI delivered. Premium features gated behind Growth and Enterprise tiers.',
+  mainProductPrice: 'Growth tier at $199/mo is our highest-volume plan, representing 55% of revenue.',
+  competitorPricing: 'HubSpot Marketing Hub starts at $800/mo. ActiveCampaign at $149/mo. We sit competitively in the mid-range.',
+  qualityAssurance: '99.95% uptime SLA. SOC 2 Type II certified. Bi-weekly release cycles with automated QA pipeline.',
+  expansionPlans: 'Launching AI-powered predictive analytics module. Expanding to European markets. Building integrations with Salesforce and Shopify.',
+  websiteFeatures: 'Interactive ROI calculator, live demo environment, customer success stories, resource hub with 200+ articles.',
+  brandKeyMessages: '"Marketing intelligence, simplified." — We make powerful tools accessible without the enterprise price tag or complexity.',
+  brandTone: 'Confident but approachable. Technical yet jargon-free. We explain complex concepts simply without being condescending.',
+  brandPersonality: 'The knowledgeable friend who happens to be a marketing expert — helpful, direct, and always data-driven.',
+  idealCustomer: 'VP of Marketing or Growth Lead at a B2B company with 50-500 employees, $5M-$50M revenue, tech-savvy but resource-constrained.',
+  audienceSegmentation: 'Segment A: Early-stage startups (Starter). Segment B: Scale-ups with dedicated marketing teams (Growth). Segment C: Mid-market enterprises needing custom workflows (Enterprise).',
+  customerPainPoints: 'Too many disconnected tools. Manual reporting wastes 10+ hours/week. Difficulty attributing revenue to specific campaigns. Lack of actionable insights from raw data.',
+  keyProblemSolved: 'We unify marketing data from 50+ sources into a single dashboard and use AI to surface the exact actions that will move the needle — no data science degree required.',
+  uniqueDifferentiator: 'Only platform that combines marketing automation, multi-touch attribution, and AI-driven recommendations in one affordable package for mid-market companies.',
+  communicatingUVP: 'Through personalized onboarding demos, ROI case studies, and a "Time-to-Value" guarantee — see results within 14 days or get a full refund.',
+  freeMediaChannels: 'SEO blog (45K monthly visitors), LinkedIn thought leadership, weekly newsletter (18K subscribers), YouTube tutorials (5K subscribers), podcast guest appearances.',
+  paidAdvertising: 'Google Ads ($15K/mo), LinkedIn Ads ($8K/mo), retargeting via Meta ($3K/mo). Total paid budget: $26K/month with blended CAC of $180.',
+  personalization: 'Behavioral email sequences based on product usage. In-app recommendations. Personalized onboarding flows based on company size and industry.',
+  roiMeasurement: 'Multi-touch attribution model, cohort analysis for retention, incrementality testing for paid campaigns, weekly growth metrics review.',
+  bestROICampaign: 'SEO content hub delivering 40% of pipeline at $22 CAC. Second: LinkedIn thought leadership generating 25% of enterprise leads.',
+  leadsPerYear: 'Approximately 28,000 marketing-qualified leads per year, converting at 8% to paid accounts.',
+  awarenessStage: 'SEO content, social media presence, podcast appearances, industry conference sponsorships, co-marketing with partners.',
+  interestStage: 'Free tools and templates, webinars, case study downloads, email nurture sequences, retargeting ads.',
+  considerationStage: 'Interactive product demos, free trial (14-day), comparison guides, ROI calculator, peer review sites (G2, Capterra).',
+  decisionStage: 'Personalized sales demos, custom pricing proposals, implementation roadmap, customer reference calls, money-back guarantee.',
+  postSaleSupport: 'Dedicated CSM for Enterprise, in-app chat support (avg 2-min response), knowledge base, monthly business reviews, user community forum.',
+  marketingTests: 'A/B testing landing pages and email subject lines weekly. Running pricing page experiments quarterly. Testing new channels (TikTok, Reddit) in H2 2026.',
+  marketingBudget: '$45K/month total. Split: Content & SEO (25%), Paid Acquisition (58%), Events & Partnerships (12%), Tools & Analytics (5%).',
+  analyticsTools: 'Google Analytics 4, Mixpanel (product analytics), HubSpot CRM, Looker (BI dashboards), our own platform for marketing attribution.',
+  calendarStartDate: 'April 1, 2026 — aligned with Q2 planning cycle.',
+  marketingKPIs: 'Pipeline generated ($), Marketing-sourced revenue, CAC by channel, MQL-to-SQL conversion rate, content engagement rate, email click-through rate, NPS score.',
+};
 
 const initialData: ExtendedQuestionnaireData = {
   personalIntro: '', name: '', companyNameLocation: '', website: '', socialMedia: '',
@@ -150,6 +212,7 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
       finalSubmitted: false,
       previousPlanType: null,
       upgradedToPlan: null,
+      isAutoFilled: false,
 
       updateData: (partial) => set((s) => ({ data: { ...s.data, ...partial } })),
 
@@ -203,7 +266,22 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         allPacketsConfirmed: false,
         finalSubmitted: false,
         showSubmitWarning: false,
+        isAutoFilled: false,
       }),
+
+      autoFillFromDocuments: () => {
+        const reviewStatuses: PacketStatus[] = Array(7).fill('review');
+        set({
+          data: autoFilledData,
+          packetStatuses: reviewStatuses,
+          currentPacket: 0,
+          allPacketsConfirmed: false,
+          isAutoFilled: true,
+          finalSubmitted: false,
+        });
+      },
+
+      setIsAutoFilled: (val) => set({ isAutoFilled: val }),
 
       handlePlanUpgrade: (previousPlan, newPlan) => {
         if (previousPlan === 'entry' && newPlan !== 'entry') {
@@ -227,6 +305,7 @@ export const useQuestionnaireStore = create<QuestionnaireStore>()(
         finalSubmitted: state.finalSubmitted,
         previousPlanType: state.previousPlanType,
         upgradedToPlan: state.upgradedToPlan,
+        isAutoFilled: state.isAutoFilled,
       }),
     }
   )
